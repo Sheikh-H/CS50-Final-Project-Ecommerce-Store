@@ -1,0 +1,14 @@
+
+users table:
+
+CREATE TABLE sqlite_sequence(name,seq);
+CREATE TABLE IF NOT EXISTS "users" (
+        "user_id"       INTEGER NOT NULL UNIQUE,
+        "firstname"     TEXT NOT NULL,
+        "surname"       TEXT NOT NULL,
+        "email" TEXT NOT NULL UNIQUE,
+        "password"      TEXT NOT NULL,
+        "address"       TEXT NOT NULL,
+        PRIMARY KEY("user_id" AUTOINCREMENT)
+);
+-----------------------------------------------------------
