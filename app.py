@@ -73,9 +73,12 @@ def admin():
 @app.route("/add_new_products", methods=["GET", "POST"])
 @admin_required
 def add_new_products():
-
     title = "Add new products"
     if request.method == "POST":
+        #This was added after consulting ChatGPT on why a product was being added 3 times - didn't work
+        if session.get("last_product_submit") == request.form.get("name"):
+            return redirect(url_for("dashboard"))
+        session["last_product_submit"] = request.form.get("name")
         connection = connect_db()
         cursor = connection.cursor()
         name = request.form.get("name")

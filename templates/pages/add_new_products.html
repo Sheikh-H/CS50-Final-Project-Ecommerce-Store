@@ -11,10 +11,8 @@
       <!-- the enctype I have included as instructed by ChatGPT as this is what helps the backend (flask) recieve each file as there is also more than one I also added the acept="image/*" to prevent none image uploads (CHATGPT recommended) -->
       <label for="product_name">Product Name:</label>
       <input type="text" name="name" />
-
       <label for="description">Description</label>
       <input type="textarea" name="description" rows="5" cols="50" />
-
       <label for="gender">Gender</label>
       <select name="gender" id="gender">
         <option value="Men">Men</option>
@@ -22,22 +20,16 @@
         <option value="Children">Children</option>
         <option value="Unisex">Unisex</option>
       </select>
-
       <label for="category">Category</label>
       <input type="text" name="category" />
-
       <label for="price">Price</label>
       <input type="number" name="price" step="0.01" />
-
       <label for="brand">Brand</label>
       <input type="" name="brand" />
-
       <label for="quantity">Stock Quantity</label>
       <input type="text" name="quantity" />
-
       <label for="image">Upload product images</label>
       <input type="file" name="image" multiple />
-
       <input type="submit" value="Add product" />
     </form>
   </div>

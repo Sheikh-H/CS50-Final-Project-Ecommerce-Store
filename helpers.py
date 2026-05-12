@@ -57,7 +57,7 @@ def login_required(f):
 
 
 def connect_db():
-    connection = sqlite3.connect("instance/shop.db")
+    connection = sqlite3.connect("instance/shop.db", timeout=10)
     connection.execute("PRAGMA foreign_keys = ON")
     connection.row_factory = sqlite3.Row
     return connection
