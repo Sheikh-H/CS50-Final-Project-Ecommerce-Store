@@ -13,8 +13,6 @@ from cloudinary.utils import cloudinary_url
 
 app = Flask(__name__)
 
-date = datetime.now()
-now = date.strftime("%d/%m/%Y %H:%M")
 
 load_dotenv()
 
@@ -75,10 +73,11 @@ def admin():
 @app.route("/add_new_products", methods=["GET", "POST"])
 @admin_required
 def add_new_products():
-    connection = connect_db()
-    cursor = connection.cursor()
+
     title = "Add new products"
     if request.method == "POST":
+        connection = connect_db()
+        cursor = connection.cursor()
         name = request.form.get("name")
         description = request.form.get("description")
         gender = request.form.get("gender")
@@ -86,6 +85,7 @@ def add_new_products():
         price = request.form.get("price")
         brand = request.form.get("brand")
         qty = request.form.get("quantity")
+        date = date_time()
         cursor.execute(
             """
             INSERT INTO products 
@@ -109,7 +109,7 @@ def add_new_products():
                 brand,
                 qty,
                 gender,
-                now,
+                date,
             ),
         )
         product_id = cursor.lastrowid
@@ -119,7 +119,13 @@ def add_new_products():
                 continue
             upload = cloudinary.uploader.upload(image, folder="MONO_Products")
             image_url = upload["secure_url"]
-            cursor.execute("""INSERT INTO product_images (product_id, image_url) VALUES (?, ?);""",(product_id,image_url,))
+            cursor.execute(
+                """INSERT INTO product_images (product_id, image_url) VALUES (?, ?);""",
+                (
+                    product_id,
+                    image_url,
+                ),
+            )
         connection.commit()
         connection.close()
         return redirect(url_for("dashboard"))
@@ -201,4 +207,4 @@ def register():
 
 if __name__ == "__main__":
     port = os.environ.get("PORT", 5000)
-    app.run(debug=True, host="127.0.0.1", port=port)
+    app.run(debug=False, host="127.0.0.1", port=port)

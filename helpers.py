@@ -4,6 +4,13 @@ from flask import *
 from argon2.exceptions import *
 import secrets  # imported to help create the secret key
 from functools import wraps
+from datetime import datetime
+
+
+def date_time():
+    date = datetime.now()
+    now = date.strftime("%d/%m/%Y %H:%M")
+    return now
 
 
 # Same function made for admins to prevent url hacking
