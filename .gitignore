@@ -3,3 +3,4 @@ node_modules/*
 .pretterrc
 journal.txt
 database.txt
+.gitignore
