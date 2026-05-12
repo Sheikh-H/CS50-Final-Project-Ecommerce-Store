@@ -90,20 +90,7 @@ def add_new_products():
         qty = request.form.get("quantity")
         date = date_time()
         cursor.execute(
-            """
-            INSERT INTO products 
-            (
-            product_name, 
-            product_description, 
-            product_price, 
-            product_category, 
-            product_brand, 
-            product_stock_qty, 
-            product_gender, 
-            product_created_at
-            ) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
-            """,
+            """INSERT INTO products (product_name, product_description, product_price, product_category, product_brand, product_stock_qty, product_gender, product_created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?);""",
             (
                 name,
                 description,
@@ -115,13 +102,9 @@ def add_new_products():
                 date,
             ),
         )
-        connection.commit()
-        connection.close()
         product_id = cursor.lastrowid
         images = request.files.getlist("image")
         for image in images:
-            connection = connect_db()
-            cursor = connection.cursor()
             if image.filename == "":
                 continue
             upload = cloudinary.uploader.upload(image, folder="MONO_Products")
@@ -133,7 +116,7 @@ def add_new_products():
                     image_url,
                 ),
             )
-            connection.commit()
+        connection.commit()
         connection.close()
         return redirect(url_for("dashboard"))
     return render_template("pages/add_new_products.html", title=title)
