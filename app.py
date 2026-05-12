@@ -65,7 +65,7 @@ def admin():
         admin, error = admin_login_function(username, password)
         if admin:
             session.clear()
-            session["user_id"] = admin["admin_id"]
+            session["admin_id"] = admin["admin_id"]
             session.permanent = True
             return redirect(url_for("dashboard"))
         message = error
@@ -76,6 +76,60 @@ def admin():
 @admin_required
 def add_new_products():
     title = "Add new products"
+    if request.method == "POST":
+        connection = connect_db()
+        cursor = connection.cursor()
+        name = request.form.get("name")
+        description = request.form.get("description")
+        gender = request.form.get("gender")
+        category = request.form.get("category")
+        price = request.form.get("price")
+        brand = request.form.get("brand")
+        qty = request.form.get("quantity")
+        cursor.execute(
+            """
+            INSERT INTO products 
+            (
+            product_name, 
+            product_description, 
+            product_price, 
+            product_category, 
+            product_brand, 
+            product_stock_qty, 
+            product_gender, 
+            product_created_at
+            ) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+            """,
+            (
+                name,
+                description,
+                price,
+                category,
+                brand,
+                qty,
+                gender,
+                now,
+            ),
+        )
+        connection.commit()
+        product_id = cursor.lastrowid
+        images = request.files.getlist("image")
+        for image in images:
+            if image.filename == "":
+                continue
+            upload = cloudinary.uploader.upload(image, folder="MONO_Products")
+            image_url = upload["secure_url"]
+            cursor.execute(
+                """INSERT INTO product_images (product_id, image_url) VALUES (?, ?);""",
+                (
+                    product_id,
+                    image_url,
+                ),
+            )
+            connection.commit()
+        connection.close()
+        return redirect(url_for("dashboard"))
     return render_template("pages/add_new_products.html", title=title)
 
 
@@ -83,11 +137,16 @@ def add_new_products():
 @admin_required
 def dashboard():
     title = "Admin Dashboard"
-    admin_id = session["user_id"]
     connection = connect_db()
     cursor = connection.cursor()
+    cursor.execute(
+        """SELECT * FROM admins WHERE admin_id = ?;""", (session["admin_id"],)
+    )
+    admin = cursor.fetchone()
     connection.close()
-    return render_template("pages/dashboard.html", title=title)
+    return render_template(
+        "pages/dashboard.html", title=title, username=admin["username"]
+    )
 
 
 @app.route("/about")

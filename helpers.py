@@ -10,7 +10,7 @@ from functools import wraps
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get("user_id"):
+        if not session.get("admin_id"):
             return redirect("/admin")
 
         return f(*args, **kwargs)
