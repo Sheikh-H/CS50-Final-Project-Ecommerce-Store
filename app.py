@@ -70,6 +70,13 @@ def admin():
     return render_template("pages/admin_login.html", title=title, message=message)
 
 
+@app.route("/add_new_products", methods=["GET", "POST"])
+@admin_required
+def add_new_products():
+    title = "Add new products"
+    return render_template("pages/add_new_products.html", title=title)
+
+
 @app.route("/dashboard", methods=["GET", "POST"])
 @admin_required
 def dashboard():

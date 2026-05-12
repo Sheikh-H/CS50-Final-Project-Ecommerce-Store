@@ -5,6 +5,13 @@
 |         |           |         |                              | DN2WijfEyATLsW68Bs9gjWHGJ3sTQXNEc1LJg                        |                                              |
 +---------+-----------+---------+------------------------------+--------------------------------------------------------------+----------------------------------------------+
 sqlite> .schema
+sqlite> select * from admins;
++----------+-------+--------+----------+--------------------------------------------------------------+------------------+
+| admin_id | role  |  name  | username |                           password                           |    created_at    |
++----------+-------+--------+----------+--------------------------------------------------------------+------------------+
+| 1        | owner | Sheikh | hussain  | $argon2id$v=19$m=65536,t=3,p=4$/zZZW18KKsVFbQczNTzljw$etlKsU | 12/05/2026 17:05 |
+|          |       |        |          | 6RR89ltTEAxxhUZwC8I3K0pENjiq4Kdes60t0                        |                  |
++----------+-------+--------+----------+--------------------------------------------------------------+------------------+
 CREATE TABLE sqlite_sequence(name,seq);
 CREATE TABLE IF NOT EXISTS "products" (
         "product_id"    INTEGER NOT NULL UNIQUE,
@@ -66,3 +73,11 @@ CREATE TABLE IF NOT EXISTS "users" (
         "address"       TEXT NOT NULL,
         PRIMARY KEY("user_id" AUTOINCREMENT)
 );
+
+
+
+
+
+insert into users (firstname, surname, email, password, address) values ('Sheikh', 'Hussain', 'sheikh.hussain@sheikh.com', '70 Oldham Street, Hyde, Manchester, SK14 1LL');
+
+insert into admins (role, name, username, password, created_at) values ('owner', 'Hussain', 'Hussain', '$argon2id$v=19$m=65536,t=3,p=4$/zZZW18KKsVFbQczNTzljw$etlKsU6RR89ltTEAxxhUZwC8I3K0pENjiq4Kdes60t0', '12/05/2026 19:17');

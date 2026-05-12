@@ -1,0 +1,23 @@
+{% extends 'layout.html' %} {% block content %}
+<section>
+  <div>
+    <h3>Add a new product</h3>
+    <form action="/add_new_products" method="post">
+      <label for="product_name">Product Name:</label>
+      <input type="text" name="name" />
+      <label for="description">Description</label>
+      <input type="text" name="description" />
+      <label for="product_gender">Gender</label>
+      <input type="text" name="gender" />
+      <label for="product_description">Category</label>
+      <input type="text" name="category" />
+      <label for="product_brand">Brand</label>
+      <input type="" name="brand" />
+      <label for="product_description">Stock Quantity</label>
+      <input type="text" name="quantity" />
+      <label for="image">Upload product image</label>
+      <input type="image" name="image" />
+    </form>
+  </div>
+</section>
+{% endblock %}
