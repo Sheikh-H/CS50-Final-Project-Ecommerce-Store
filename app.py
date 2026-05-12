@@ -16,8 +16,7 @@ app = Flask(__name__)
 
 load_dotenv()
 
-load_dotenv()
-
+# This is for uploading all images like product images which are then pulled from online source allowing for admin users to create and add new products
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
     api_key=os.getenv("CLOUDINARY_API_KEY"),
@@ -26,6 +25,7 @@ cloudinary.config(
 )
 
 
+# this is cookies and cache control, it allows for the website to always keep them clear and load the page from server each time (useful for small web applications)
 @app.after_request
 def after_request(response):
     response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
@@ -34,13 +34,14 @@ def after_request(response):
     return response
 
 
+# This is for session management and ensuring a timelimit of user inactivity on browser or once logged in.
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_SAMESITE="Lax",
     PERMANENT_SESSION_LIFETIME=timedelta(hours=1),
 )
-
+# This is the type of session (i would still wnat to practice using these a little as there are signed and unsigned versions and depending on what sort of application being developed each has its own pros and cons)
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 app.secret_key = os.environ.get("SECRET_KEY")
