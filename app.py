@@ -13,6 +13,8 @@ from cloudinary.utils import cloudinary_url
 
 app = Flask(__name__)
 
+date = datetime.now()
+now = date.strftime("%d/%m/%Y %H:%M")
 
 load_dotenv()
 

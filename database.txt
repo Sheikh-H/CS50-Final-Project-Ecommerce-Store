@@ -74,7 +74,16 @@ CREATE TABLE IF NOT EXISTS "users" (
         PRIMARY KEY("user_id" AUTOINCREMENT)
 );
 
+CREATE TABLE product_images (
+    image_id INTEGER PRIMARY KEY AUTOINCREMENT,
 
+    product_id INTEGER NOT NULL,
+    image_url TEXT NOT NULL,
+
+    is_primary INTEGER DEFAULT 0,
+
+    FOREIGN KEY(product_id) REFERENCES products(product_id)
+);
 
 
 
