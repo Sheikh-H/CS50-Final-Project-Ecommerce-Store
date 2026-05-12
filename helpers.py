@@ -10,11 +10,32 @@ from functools import wraps
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not session.get("admin_id"):
+        if not session.get("user_id"):
             return redirect("/admin")
+
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+def admin_login_function(username, password):
+    connection = connect_db()
+    cursor = connection.cursor()
+    verify = argon2.PasswordHasher().verify
+    cursor.execute(
+        """ SELECT * FROM admins WHERE username = ?; """,
+        (username,),
+    )
+    admin = cursor.fetchone()
+    if not admin:
+        return None, "Username incorrect"
+    try:
+        verify(admin["password"], password)
+        return admin, "Logged in"
+    except VerifyMismatchError:
+        return None, "Password Incorrect"
+    finally:
+        connection.close()
 
 
 def login_required(f):
@@ -49,7 +70,6 @@ def user_login(email, password):
 
     if not user:
         return None, "Email not found, please sign up or try again"
-    print(user["password"])
     try:
         verify(user["password"], password)
         return user, "Logged in"

@@ -53,14 +53,32 @@ def home():
     return render_template("pages/home.html", title=title)
 
 
-@app.route("/admin")
+@app.route("/admin", methods=["GET", "POST"])
 def admin():
     title = "Admin page"
+    message = ""
     if request.method == "POST":
         username = request.form.get("username").strip()
         password = request.form.get("password").strip()
-        
-    return render_template("pages/admin_login.html", title=title)
+        admin, error = admin_login_function(username, password)
+        if admin:
+            session.clear()
+            session["user_id"] = admin["admin_id"]
+            session.permanent = True
+            return redirect(url_for("dashboard"))
+        message = error
+    return render_template("pages/admin_login.html", title=title, message=message)
+
+
+@app.route("/dashboard", methods=["GET", "POST"])
+@admin_required
+def dashboard():
+    title = "Admin Dashboard"
+    admin_id = session["user_id"]
+    connection = connect_db()
+    cursor = connection.cursor()
+    connection.close()
+    return render_template("pages/dashboard.html", title=title)
 
 
 @app.route("/about")
@@ -78,7 +96,7 @@ def account():
     cursor = connection.cursor()
     cursor.execute("""SELECT * FROM users WHERE user_id = ?;""", (user_id,))
     user = cursor.fetchone()
-
+    connection.close()
     return render_template("/pages/account.html", title=title, user=user)
 
 
