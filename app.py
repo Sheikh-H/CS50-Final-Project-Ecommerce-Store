@@ -75,7 +75,7 @@ def admin():
 def add_new_products():
     title = "Add new products"
     if request.method == "POST":
-        #This was added after consulting ChatGPT on why a product was being added 3 times - didn't work
+        # This was added after consulting ChatGPT on why a product was being added 3 times - didn't work
         if session.get("last_product_submit") == request.form.get("name"):
             return redirect(url_for("dashboard"))
         session["last_product_submit"] = request.form.get("name")
@@ -115,9 +115,13 @@ def add_new_products():
                 date,
             ),
         )
+        connection.commit()
+        connection.close()
         product_id = cursor.lastrowid
         images = request.files.getlist("image")
         for image in images:
+            connection = connect_db()
+            cursor = connection.cursor()
             if image.filename == "":
                 continue
             upload = cloudinary.uploader.upload(image, folder="MONO_Products")
@@ -129,7 +133,7 @@ def add_new_products():
                     image_url,
                 ),
             )
-        connection.commit()
+            connection.commit()
         connection.close()
         return redirect(url_for("dashboard"))
     return render_template("pages/add_new_products.html", title=title)

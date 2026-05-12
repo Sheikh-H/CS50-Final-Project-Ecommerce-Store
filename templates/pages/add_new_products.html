@@ -1,4 +1,5 @@
 {% extends 'layout.html' %} {% block content %}
+<!-- the enctype I have included as instructed by ChatGPT as this is what helps the backend (flask) recieve each file as there is also more than one I also added the acept="image/*" to prevent none image uploads (CHATGPT recommended) -->
 <section>
   <div>
     <h3>Add a new product</h3>
@@ -8,7 +9,6 @@
       enctype="multipart/form-data"
       accept="image/*"
     >
-      <!-- the enctype I have included as instructed by ChatGPT as this is what helps the backend (flask) recieve each file as there is also more than one I also added the acept="image/*" to prevent none image uploads (CHATGPT recommended) -->
       <label for="product_name">Product Name:</label>
       <input type="text" name="name" />
       <label for="description">Description</label>
