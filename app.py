@@ -75,10 +75,10 @@ def admin():
 @app.route("/add_new_products", methods=["GET", "POST"])
 @admin_required
 def add_new_products():
+    connection = connect_db()
+    cursor = connection.cursor()
     title = "Add new products"
     if request.method == "POST":
-        connection = connect_db()
-        cursor = connection.cursor()
         name = request.form.get("name")
         description = request.form.get("description")
         gender = request.form.get("gender")
@@ -112,7 +112,6 @@ def add_new_products():
                 now,
             ),
         )
-        connection.commit()
         product_id = cursor.lastrowid
         images = request.files.getlist("image")
         for image in images:
@@ -120,14 +119,8 @@ def add_new_products():
                 continue
             upload = cloudinary.uploader.upload(image, folder="MONO_Products")
             image_url = upload["secure_url"]
-            cursor.execute(
-                """INSERT INTO product_images (product_id, image_url) VALUES (?, ?);""",
-                (
-                    product_id,
-                    image_url,
-                ),
-            )
-            connection.commit()
+            cursor.execute("""INSERT INTO product_images (product_id, image_url) VALUES (?, ?);""",(product_id,image_url,))
+        connection.commit()
         connection.close()
         return redirect(url_for("dashboard"))
     return render_template("pages/add_new_products.html", title=title)
