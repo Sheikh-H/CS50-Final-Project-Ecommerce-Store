@@ -1,0 +1,23 @@
+{% extends 'layout.html' %} {% block content %}
+<div class="flex h-screen w-screen items-center justify-center text-center">
+  <div
+    class="flex w-9/10 flex-col items-center rounded-2xl p-5 shadow-2xl shadow-gray-500 lg:w-1/2"
+  >
+    <h3>Admin Login</h3>
+    <p>Please login</p>
+    <form action="/admin" method="post">
+      <div class="mb-1">
+        <label class="font-bold">Username:</label>
+        <input type="email" name="email" />
+      </div>
+      <div>
+        <label for="password" class="font-bold">Password:</label>
+        <input type="password" name="password" />
+      </div>
+      <input type="submit" class="pbutton mt-1" value="Login" />
+    </form>
+    <div>{% if message %} {{message}} {% endif %}</div>
+    <p><a href="#">Forgot Password?</a></p>
+  </div>
+</div>
+{% endblock %}

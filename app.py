@@ -53,6 +53,16 @@ def home():
     return render_template("pages/home.html", title=title)
 
 
+@app.route("/admin")
+def admin():
+    title = "Admin page"
+    if request.method == "POST":
+        username = request.form.get("username").strip()
+        password = request.form.get("password").strip()
+        
+    return render_template("pages/admin_login.html", title=title)
+
+
 @app.route("/about")
 def about():
     title = "About Us"

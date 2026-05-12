@@ -6,6 +6,17 @@ import secrets  # imported to help create the secret key
 from functools import wraps
 
 
+# Same function made for admins to prevent url hacking
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get("admin_id"):
+            return redirect("/admin")
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
