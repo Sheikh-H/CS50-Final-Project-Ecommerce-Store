@@ -64,6 +64,7 @@ def admin():
         admin, error = admin_login_function(username, password)
         if admin:
             session.clear()
+            session.modified = True
             session["admin_id"] = admin["admin_id"]
             session.permanent = True
             return redirect(url_for("dashboard"))

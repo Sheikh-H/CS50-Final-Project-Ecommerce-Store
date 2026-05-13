@@ -4,3 +4,4 @@ node_modules/*
 journal.txt
 database.txt
 .gitignore
+test.py
