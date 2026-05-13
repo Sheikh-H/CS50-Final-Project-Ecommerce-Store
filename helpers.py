@@ -16,9 +16,6 @@ def date_time():
     return now
 
 
-now = date_time()
-
-
 # Same function made for admins to prevent url hacking
 def admin_required(f):
     @wraps(f)
@@ -105,7 +102,7 @@ def add_new_user(fname, sname, email, password, address):
                 email,
                 hashed_password,
                 address,
-                now,
+                date_time(),
             ),
         )
         connection.commit()
@@ -116,6 +113,7 @@ def add_new_user(fname, sname, email, password, address):
         connection.close()
 
     # print(secrets.token_hex(32)) - this is the function used to generate a random key
+
 
 def add_product(name, description, gender, category, price, brand, qty, images):
     try:
@@ -131,7 +129,7 @@ def add_product(name, description, gender, category, price, brand, qty, images):
                 brand,
                 qty,
                 gender,
-                now,
+                date_time(),
             ),
         )
         product_id = cursor.lastrowid
@@ -155,3 +153,28 @@ def add_product(name, description, gender, category, price, brand, qty, images):
     finally:
         connection.close()
     return True, "Product Added!"
+
+
+def update_product(
+    name,
+    description,
+    price,
+    category,
+    brand,
+    qty,
+    gender,
+    product_id,
+):
+    try:
+        connection = connect_db()
+        cursor = connection.cursor()
+        cursor.execute(
+            """UPDATE products SET product_name = ?, product_description = ?, product_price = ?, product_category = ?, product_brand = ?, product_stock_qty = ?, product_gender = ? WHERE product_id = ?;""",
+            (name, description, price, category, brand, qty, gender, product_id),
+        )
+        connection.commit()
+        return True, "Product Updated Successfully!"
+    except:
+        return False, "Unable to update product!"
+    finally:
+        connection.close()

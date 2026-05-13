@@ -1,7 +1,12 @@
 {% extends 'layout.html' %} {% block content %}
 <section>
+  <div>
+    {% if message %}
+      <p>{{message}}</p>
+    {% endif %}
+  </div>
   <form
-    action="{{ url_for('modify_products', product_id=product['product_id']) }}"
+    action="{{ url_for('modify_a_product', product_id=product['product_id']) }}"
     method="post"
     enctype="multipart/form-data"
   >
@@ -9,9 +14,7 @@
     <input type="text" name="name" value="{{ product['product_name'] }}" />
 
     <label for="description">Description</label>
-    <textarea name="description" rows="5" cols="50">
-      {{ product['product_description'] }}
-    </textarea>
+    <textarea name="description" rows="5" cols="50">{{ product['product_description'] }}</textarea>
 
     <label for="category">Category</label>
     <input
@@ -55,12 +58,14 @@
         alt="Product Image"
         class="h-28 w-28 rounded-xl p-1"
       />
-      <input type="radio" value="{{ image['image_id'] }}" {% if image['is_primary'] == 1%}checked{% endif %} />
+      <label>
+      <input name ="is_primary" type="radio" value="{{ image['image_id'] }}" {% if image['is_primary'] == 1%}checked{% endif %} />
+      Primary Image </label>
       {% endfor %}
     </div>
     <input type="file" multiple accept="image/*" name="images" />
 
-    <button class="pbutton p-1" type="submit">Update fields Product</button>
+    <button class="pbutton p-1" type="submit">Update Product</button>
   </form>
 </section>
 {% endblock %}

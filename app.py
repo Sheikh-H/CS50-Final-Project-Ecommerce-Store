@@ -136,21 +136,43 @@ def modify_a_product(product_id):
     )
     images = cursor.fetchall()
     title = f"Modify {product['product_name']}"
-    if request.method == "post":
-        connection = connect_db()
-        cursor = connection.cursor()
+    connection.close()
+    if request.method == "POST":
         name = request.form.get("name")
-        description = request.method.get("description")
-        category = request.method.get("category")
-        gender = request.method.get("gender")
-        price = request.method.get("price")
-        brand = request.method.get("brand")
-        stock_qty = request.method.get("quantity")
-
+        description = request.form.get("description")
+        category = request.form.get("category")
+        gender = request.form.get("gender")
+        price = request.form.get("price")
+        brand = request.form.get("brand")
+        stock_qty = request.form.get("quantity")
+        primary = request.form.get("is_primary")
+        success, message = update_product(
+            name,
+            description,
+            category,
+            gender,
+            price,
+            brand,
+            stock_qty,
+            product_id,
+            primary,
+        )
+        if primary:
+            cursor.execute(
+                """UPDATE product_images SET is_primary = 0 WHERE product_id = ?;""",
+                (product_id,),
+            )
+            cursor.execute(
+                """UPDATE product_images SET is_primary = 1 WHERE product_id = ? AND image_id = ?;""",
+                (
+                    product_id,
+                    primary,
+                ),
+            )
         new_images = request.files.getlist("images")
-        valid_images = [image for image in images if image.filename != ""]
+        valid_images = [image for image in new_images if image.filename != ""]
         if valid_images:
-            for image in images:
+            for image in valid_images:
                 upload = cloudinary.uploader.upload(image, folder="MONO_Products")
                 image_url = upload["secure_url"]
                 cursor.execute(
@@ -160,7 +182,10 @@ def modify_a_product(product_id):
                         image_url,
                     ),
                 )
-            
+            connection.commit()
+            connection.close()
+        if not success:
+            return render_template("pages/modify_product.html", message=message)
     return render_template(
         "pages/modify_product.html",
         title=title,
