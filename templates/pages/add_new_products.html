@@ -1,6 +1,9 @@
 {% extends 'layout.html' %} {% block content %}
 <section>
   <div>
+    {% if message %}
+    <p>{{message}}</p>
+    {% endif %}
     <h3>Add a new product</h3>
     <form
       action="/add_new_products"

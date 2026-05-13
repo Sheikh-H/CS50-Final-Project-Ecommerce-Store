@@ -143,6 +143,7 @@ def login():
         user, error = user_login(email, password)
         if user:
             session.clear()
+            session.modified = True
             session["user_id"] = user["user_id"]
             session.permanent = True
             return redirect(url_for("account"))
@@ -166,4 +167,4 @@ def register():
 
 if __name__ == "__main__":
     port = os.environ.get("PORT", 5000)
-    app.run(debug=False, host="127.0.0.1", port=port)
+    app.run(debug=True, host="127.0.0.1", port=port)

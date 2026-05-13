@@ -96,13 +96,6 @@ def add_new_user(fname, sname, email, password, address):
     connection = connect_db()
     cursor = connection.cursor()
     hashed_password = argon2.PasswordHasher().hash(password)
-    fname = fname.strip()
-    sname = sname.strip()
-    fname = fname.lower()
-    sname = sname.lower()
-    fname = fname.title()
-    sname = sname.title()
-    email = email.strip()
     try:
         cursor.execute(
             """INSERT INTO users (firstname, surname, email, password, address) VALUES (?, ?, ?, ?, ?);""",
@@ -151,5 +144,5 @@ def add_product(name, description, gender, category, price, brand, qty, images):
         connection.commit()
         connection.close()
     except:
-        return None, "Unable to add product!"
-    return None, "Product Added!"
+        return False, "Unable to add product!"
+    return True, "Product Added!"
