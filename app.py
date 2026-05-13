@@ -85,7 +85,14 @@ def add_new_products():
         price = request.form.get("price")
         brand = request.form.get("brand")
         qty = request.form.get("quantity")
-        images = request.form.getlist("images")
+        images = request.files.getlist("images")
+        valid_images = [image for image in images if image.filename != ""]
+        if not valid_images:
+            message = "Please insert at least one image"
+            title = "Add new products"
+            return render_template(
+                "pages/add_new_products.html", title=title, message=message
+            )
         success, message = add_product(
             name,
             description,

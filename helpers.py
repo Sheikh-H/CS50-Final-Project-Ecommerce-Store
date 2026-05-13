@@ -155,5 +155,4 @@ def add_product(name, description, gender, category, price, brand, qty, images):
         return False, "Unable to add product!"
     finally:
         connection.close()
-
     return True, "Product Added!"
