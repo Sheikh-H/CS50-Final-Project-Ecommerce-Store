@@ -78,7 +78,6 @@ def add_new_products():
     if request.method == "POST":
         connection = connect_db()
         cursor = connection.cursor()
-
         name = request.form.get("name")
         description = request.form.get("description")
         gender = request.form.get("gender")
