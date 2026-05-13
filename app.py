@@ -74,7 +74,8 @@ def admin():
     return render_template("pages/admin_login.html", title=title, message=message)
 
 
-@app.route("/delete_a_product", methods=["GET", "DELETE"])
+# This function was built with the help of AI
+@app.route("/delete_a_product/<int:product_id>", methods=["POST"])
 @admin_required
 def delete_product(product_id):
     connection = connect_db()
@@ -83,6 +84,8 @@ def delete_product(product_id):
         """DELETE FROM products WHERE product_id = ?;""",
         (product_id,),
     )
+    connection.commit()
+    connection.close()
     return redirect(url_for("modify_products"))
 
 

@@ -63,14 +63,13 @@
         <button class="pbutton" value="{{ product['product_id'] }}">
           Select Product
         </button>
-        <button
-          class="sbutton"
-          value="{{ product['product_id'] }}"
-          onclick="{{url_for('delete_a_product')}}"
+        <form
+          action="{{ url_for('delete_product', product_id = product['product_id'])}}"
+          method="post"
+          onsubmit="return confirm('Delete this product?');"
         >
-          Delete Product
-        </button>
-        
+          <button class="sbutton" type="submit">Delete Product</button>
+        </form>
       </div>
     </div>
     {% endfor %}
