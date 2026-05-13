@@ -76,6 +76,7 @@ def admin():
 def add_new_products():
     title = "Add new products"
     if request.method == "POST":
+        print("ROUTE HIT")
         connection = connect_db()
         cursor = connection.cursor()
         name = request.form.get("name")
@@ -85,6 +86,7 @@ def add_new_products():
         price = request.form.get("price")
         brand = request.form.get("brand")
         qty = request.form.get("quantity")
+        print("INSERTING PRODUCT")
         cursor.execute(
             """INSERT INTO products (product_name, product_description, product_price, product_category, product_brand, product_stock_qty, product_gender, product_created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?);""",
             (
@@ -98,9 +100,9 @@ def add_new_products():
                 date_now,
             ),
         )
+        connection.commit()
         product_id = cursor.lastrowid
         images = request.files.getlist("image")
-
         for image in images:
             if image.filename == "":
                 continue
@@ -113,7 +115,6 @@ def add_new_products():
                     image_url,
                 ),
             )
-            connection.commit()
         connection.close()
         return redirect(url_for("dashboard"))
     return render_template("pages/add_new_products.html", title=title)
