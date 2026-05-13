@@ -78,10 +78,7 @@ def add_new_products():
     if request.method == "POST":
         connection = connect_db()
         cursor = connection.cursor()
-        # This was added after consulting ChatGPT on why a product was being added 3 times - didn't work
-        if session.get("last_product_submit") == request.form.get("name"):
-            return redirect(url_for("dashboard"))
-        session["last_product_submit"] = request.form.get("name")
+
         name = request.form.get("name")
         description = request.form.get("description")
         gender = request.form.get("gender")
@@ -102,14 +99,10 @@ def add_new_products():
                 date_now,
             ),
         )
-        connection.commit()
         product_id = cursor.lastrowid
-        connection.close()
         images = request.files.getlist("image")
 
         for image in images:
-            connection = connect_db()
-            cursor = connection.cursor()
             if image.filename == "":
                 continue
             upload = cloudinary.uploader.upload(image, folder="MONO_Products")
@@ -122,7 +115,7 @@ def add_new_products():
                 ),
             )
             connection.commit()
-            connection.close()
+        connection.close()
         return redirect(url_for("dashboard"))
     return render_template("pages/add_new_products.html", title=title)
 
