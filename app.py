@@ -126,6 +126,7 @@ def add_new_products():
 @app.route("/modify_products/<int:product_id>", methods=["GET", "POST"])
 @admin_required
 def modify_a_product(product_id):
+    message = ""
     connection = connect_db()
     cursor = connection.cursor()
     cursor.execute(""" SELECT * FROM products WHERE product_id = ?;""", (product_id,))
@@ -135,9 +136,37 @@ def modify_a_product(product_id):
     )
     images = cursor.fetchall()
     title = f"Modify {product['product_name']}"
+    if request.method == "post":
+        connection = connect_db()
+        cursor = connection.cursor()
+        name = request.form.get("name")
+        description = request.method.get("description")
+        category = request.method.get("category")
+        gender = request.method.get("gender")
+        price = request.method.get("price")
+        brand = request.method.get("brand")
+        stock_qty = request.method.get("quantity")
 
+        new_images = request.files.getlist("images")
+        valid_images = [image for image in images if image.filename != ""]
+        if valid_images:
+            for image in images:
+                upload = cloudinary.uploader.upload(image, folder="MONO_Products")
+                image_url = upload["secure_url"]
+                cursor.execute(
+                    """ INSERT INTO product_images (product_id, image_url) VALUES (?, ?);""",
+                    (
+                        product_id,
+                        image_url,
+                    ),
+                )
+            
     return render_template(
-        "modify_product.html", title=title, product=product, images=images
+        "pages/modify_product.html",
+        title=title,
+        product=product,
+        images=images,
+        message=message,
     )
 
 

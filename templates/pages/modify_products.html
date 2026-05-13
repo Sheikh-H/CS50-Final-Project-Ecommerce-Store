@@ -61,7 +61,7 @@
       </div>
       <div class="flex flex-col gap-1">
         <form
-          action="{{ url_for('modify_product', product_id = product['product_id']) }}"
+          action="{{ url_for('modify_a_product', product_id = product['product_id']) }}"
           method="post"
         >
           <button class="pbutton" value="{{ product['product_id'] }}">
