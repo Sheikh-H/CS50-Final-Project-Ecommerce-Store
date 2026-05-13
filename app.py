@@ -56,7 +56,9 @@ def home():
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
-    title = "Admin page"
+    if session["admin_id"]:
+        return redirect(url_for("dashboard"))
+    title = "Admin Login"
     message = ""
     if request.method == "POST":
         username = request.form.get("username").strip()
@@ -70,6 +72,18 @@ def admin():
             return redirect(url_for("dashboard"))
         message = error
     return render_template("pages/admin_login.html", title=title, message=message)
+
+
+@app.route("/delete_a_product", methods=["GET", "DELETE"])
+@admin_required
+def delete_product(product_id):
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute(
+        """DELETE FROM products WHERE product_id = ?;""",
+        (product_id,),
+    )
+    return redirect(url_for("modify_products"))
 
 
 @app.route("/add_new_products", methods=["GET", "POST"])

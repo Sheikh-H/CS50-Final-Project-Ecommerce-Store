@@ -117,7 +117,6 @@ def add_new_user(fname, sname, email, password, address):
 
     # print(secrets.token_hex(32)) - this is the function used to generate a random key
 
-
 def add_product(name, description, gender, category, price, brand, qty, images):
     try:
         connection = connect_db()

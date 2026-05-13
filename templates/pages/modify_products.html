@@ -19,7 +19,7 @@
       </div>
       <div>
         <p>Price:</p>
-        <p>£{{product['product_price']}}</p>
+        <p>£{{ "%.2f" | format(product["product_price"]) }}</p>
       </div>
       <div>
         <p>Category</p>
@@ -57,14 +57,20 @@
           alt="Product Image"
           class="h-24 w-24"
         />
-
-        <div class="sbutton" value="{{ image['image_id'] }}">Delete Image</div>
         {% endif %} {% endfor %}
       </div>
-      <div>
+      <div class="flex flex-col gap-1">
         <button class="pbutton" value="{{ product['product_id'] }}">
           Select Product
         </button>
+        <button
+          class="sbutton"
+          value="{{ product['product_id'] }}"
+          onclick="{{url_for('delete_a_product')}}"
+        >
+          Delete Product
+        </button>
+        
       </div>
     </div>
     {% endfor %}
