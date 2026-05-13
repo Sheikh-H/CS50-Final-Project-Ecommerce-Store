@@ -148,7 +148,8 @@ def add_product(name, description, gender, category, price, brand, qty, images):
                 ),
             )
         connection.commit()
-    except:
+    except Exception as e:
+        print(e)
         return False, "Unable to add product!"
     finally:
         connection.close()
@@ -174,7 +175,8 @@ def update_product(
         )
         connection.commit()
         return True, "Product Updated Successfully!"
-    except:
+    except Exception as e:
+        print(e)
         return False, "Unable to update product!"
     finally:
         connection.close()

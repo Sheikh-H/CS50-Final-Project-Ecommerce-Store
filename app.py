@@ -158,6 +158,7 @@ def modify_a_product(product_id):
         )
 
         if primary:
+            primary = int(primary)
             cursor.execute(
                 """UPDATE product_images SET is_primary = 0 WHERE product_id = ?;""",
                 (product_id,),
@@ -182,10 +183,16 @@ def modify_a_product(product_id):
                         image_url,
                     ),
                 )
-            connection.commit()
-            connection.close()
+        connection.commit()
+        connection.close()
         if not success:
-            return render_template("pages/modify_product.html", message=message)
+            return render_template(
+                "pages/modify_product.html",
+                title=title,
+                product=product,
+                images=images,
+                message=message,
+            )
     return render_template(
         "pages/modify_product.html",
         title=title,
