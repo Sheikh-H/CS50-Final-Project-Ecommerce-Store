@@ -1,7 +1,33 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# Flask session files
+flask_session/
+
+# Environment variables / secrets
+.env
+
+# Database files
+instance/*.db
+
+# Node modules
+node_modules/
+
+# VS Code settings
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
 .env
 node_modules/*
 .pretterrc
 journal.txt
-database.txt
+database_notes.txt
 .gitignore
-test.py
+testing.py
