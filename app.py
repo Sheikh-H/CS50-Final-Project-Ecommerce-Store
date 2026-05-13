@@ -56,7 +56,7 @@ def home():
 
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
-    if session["admin_id"]:
+    if session.get("admin_id"):
         return redirect(url_for("dashboard"))
     title = "Admin Login"
     message = ""
@@ -144,19 +144,19 @@ def modify_a_product(product_id):
         gender = request.form.get("gender")
         price = request.form.get("price")
         brand = request.form.get("brand")
-        stock_qty = request.form.get("quantity")
+        qty = request.form.get("quantity")
         primary = request.form.get("is_primary")
         success, message = update_product(
             name,
             description,
-            category,
-            gender,
             price,
+            category,
             brand,
-            stock_qty,
+            qty,
+            gender,
             product_id,
-            primary,
         )
+
         if primary:
             cursor.execute(
                 """UPDATE product_images SET is_primary = 0 WHERE product_id = ?;""",
