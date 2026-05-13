@@ -75,10 +75,8 @@ def admin():
 @admin_required
 def add_new_products():
     title = "Add new products"
+    message = ""
     if request.method == "POST":
-        print("ROUTE HIT")
-        connection = connect_db()
-        cursor = connection.cursor()
         name = request.form.get("name")
         description = request.form.get("description")
         gender = request.form.get("gender")
@@ -86,38 +84,11 @@ def add_new_products():
         price = request.form.get("price")
         brand = request.form.get("brand")
         qty = request.form.get("quantity")
-        print("INSERTING PRODUCT")
-        cursor.execute(
-            """INSERT INTO products (product_name, product_description, product_price, product_category, product_brand, product_stock_qty, product_gender, product_created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?);""",
-            (
-                name,
-                description,
-                price,
-                category,
-                brand,
-                qty,
-                gender,
-                date_now,
-            ),
-        )
-        connection.commit()
-        product_id = cursor.lastrowid
         images = request.files.getlist("image")
-        for image in images:
-            if image.filename == "":
-                continue
-            upload = cloudinary.uploader.upload(image, folder="MONO_Products")
-            image_url = upload["secure_url"]
-            cursor.execute(
-                """INSERT INTO product_images (product_id, image_url) VALUES (?, ?);""",
-                (
-                    product_id,
-                    image_url,
-                ),
-            )
-        connection.close()
-        return redirect(url_for("dashboard"))
-    return render_template("pages/add_new_products.html", title=title)
+        success, message = add_product(
+            name, description, gender, category, price, brand, qty, images
+        )
+    return render_template("pages/add_new_products.html", title=title, message=message)
 
 
 @app.route("/dashboard", methods=["GET", "POST"])

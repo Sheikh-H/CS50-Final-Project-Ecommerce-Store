@@ -5,12 +5,18 @@ from argon2.exceptions import *
 import secrets  # imported to help create the secret key
 from functools import wraps
 from datetime import datetime
+import cloudinary
+import cloudinary.uploader
+from cloudinary.utils import cloudinary_url
 
 
 def date_time():
     date = datetime.now()
     now = date.strftime("%d/%m/%Y %H:%M")
     return now
+
+
+now = date_time()
 
 
 # Same function made for admins to prevent url hacking
@@ -96,7 +102,7 @@ def add_new_user(fname, sname, email, password, address):
     sname = sname.lower()
     fname = fname.title()
     sname = sname.title()
-    email = email.strip().lower()
+    email = email.strip()
     try:
         cursor.execute(
             """INSERT INTO users (firstname, surname, email, password, address) VALUES (?, ?, ?, ?, ?);""",
@@ -109,5 +115,41 @@ def add_new_user(fname, sname, email, password, address):
     finally:
         connection.close()
 
+    # print(secrets.token_hex(32)) - this is the function used to generate a random key
 
-# print(secrets.token_hex(32)) - this is the function used to generate a random key
+
+def add_product(name, description, gender, category, price, brand, qty, images):
+    try:
+        connection = connect_db()
+        cursor = connection.cursor()
+        cursor.execute(
+            """INSERT INTO products (product_name, product_description, product_price, product_category, product_brand, product_stock_qty, product_gender, product_created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?);""",
+            (
+                name,
+                description,
+                price,
+                category,
+                brand,
+                qty,
+                gender,
+                now,
+            ),
+        )
+        product_id = cursor.lastrowid
+        for image in images:
+            if image.filename == "":
+                continue
+            upload = cloudinary.uploader.upload(image, folder="MONO_Products")
+            image_url = upload["secure_url"]
+            cursor.execute(
+                """INSERT INTO product_images (product_id, image_url) VALUES (?, ?);""",
+                (
+                    product_id,
+                    image_url,
+                ),
+            )
+        connection.commit()
+        connection.close()
+    except:
+        return None, "Unable to add product!"
+    return None, "Product Added!"
