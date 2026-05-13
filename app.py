@@ -123,6 +123,24 @@ def add_new_products():
     return render_template("pages/add_new_products.html", title=title, message=message)
 
 
+@app.route("/modify_products/<int:product_id>", methods=["GET", "POST"])
+@admin_required
+def modify_a_product(product_id):
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute(""" SELECT * FROM products WHERE product_id = ?;""", (product_id,))
+    product = cursor.fetchone()
+    cursor.execute(
+        """ SELECT * FROM product_images WHERE product_id = ?;""", (product_id,)
+    )
+    images = cursor.fetchall()
+    title = f"Modify {product['product_name']}"
+
+    return render_template(
+        "modify_product.html", title=title, product=product, images=images
+    )
+
+
 @app.route("/modify_products", methods=["GET", "POST"])
 @admin_required
 def modify_products():

@@ -1,0 +1,67 @@
+{% extends 'layout.html' %} {% block content %}
+<section>
+  <form
+    action="{{ url_for('modify_a_product', product_id=product['product_id']) }}"
+    method="post"
+    enctype="multipart/form-data"
+  >
+    <label for="name">Product Name:</label>
+    <input type="text" name="name" value="{{ product['product_name'] }}" />
+
+    <label for="description">Description</label>
+    <textarea name="description" rows="5" cols="50">
+      {{ product['product_description'] }}
+    </textarea>
+
+    <label for="category">Category</label>
+    <input
+      type="text"
+      name="category"
+      value="{{ product['product_category'] }}"
+    />
+    
+    <label for="gender">Gender</label>
+    <select name="gender" id="gender">
+      <option value="Men" {% if product['product_gender'] == "Men" %} selected {% endif %}>Men</option>
+      <option value="Women" {% if product['product_gender'] == "Women" %}selected{% endif %}>Women</option>
+      <option value="Children" {% if product['product_gender'] == "Children" %}selected{% endif %}>Children</option>
+      <option value="Unisex" {% if product['product_gender'] == "Unisex" %}selected{% endif %}>Unisex</option>
+    </select>
+
+    <label for="price">Price</label>
+    <input
+      type="number"
+      name="price"
+      step="0.01"
+      value="{{ product['product_price'] }}"
+    />
+
+    <label for="brand">Brand</label>
+    <input type="text" name="brand" value="{{ product['product_brand'] }}" />
+
+    <label for="quantity">Stock Quantity</label>
+    <input
+      type="number"
+      name="quantity"
+      step="1"
+      value="{{ product['product_stock_qty'] }}"
+    />
+
+    <label for="image">Product images</label>
+    <div class="flex w-full border p-1">
+      {% for image in images %}
+      <img
+        src="{{ image['image_url'] }}"
+        alt="Product Image"
+        class="h-28 w-28 rounded-xl p-1"
+      />
+      <input type="radio" value="{{ image['image_id'] }}" {% if image['is_primary'] == 1%}checked{% endif %} />
+      {% endfor %}
+    </div>
+    <input type="file" multiple accept="image/*" name="images" />
+
+    <button class="pbutton p-1" type="submit">Update fields Product</button>
+  </form>
+</section>
+{% endblock %}
+

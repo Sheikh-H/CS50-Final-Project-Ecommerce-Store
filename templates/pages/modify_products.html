@@ -60,9 +60,14 @@
         {% endif %} {% endfor %}
       </div>
       <div class="flex flex-col gap-1">
-        <button class="pbutton" value="{{ product['product_id'] }}">
-          Select Product
-        </button>
+        <form
+          action="{{ url_for('modify_product', product_id = product['product_id']) }}"
+          method="post"
+        >
+          <button class="pbutton" value="{{ product['product_id'] }}">
+            Select Product
+          </button>
+        </form>
         <form
           action="{{ url_for('delete_product', product_id = product['product_id'])}}"
           method="post"
