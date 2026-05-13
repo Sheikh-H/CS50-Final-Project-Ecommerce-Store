@@ -18,7 +18,7 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not session.get("admin_id"):
-            return redirect("/admin")
+            return redirect(url_for("admin"))
 
         return f(*args, **kwargs)
 
@@ -96,6 +96,7 @@ def add_new_user(fname, sname, email, password, address):
     sname = sname.lower()
     fname = fname.title()
     sname = sname.title()
+    email = email.strip().lower()
     try:
         cursor.execute(
             """INSERT INTO users (firstname, surname, email, password, address) VALUES (?, ?, ?, ?, ?);""",
@@ -103,8 +104,8 @@ def add_new_user(fname, sname, email, password, address):
         )
         connection.commit()
         return True, "Account Registered, please login!"
-    except VerifyMismatchError:
-        return False, "Existing Account or Invalid Details, Try again or login"
+    except sqlite3.IntegrityError:
+        return False, "Existing Account or Invalid Details! Try again or login."
     finally:
         connection.close()
 

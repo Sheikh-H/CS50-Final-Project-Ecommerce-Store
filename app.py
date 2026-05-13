@@ -181,7 +181,7 @@ def login():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     title = "Register A New Account"
-    message = " "
+    message = ""
     if request.method == "POST":
         firstname = request.form.get("fname")
         surname = request.form.get("sname")
