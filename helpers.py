@@ -136,16 +136,18 @@ def add_product(name, description, gender, category, price, brand, qty, images):
             ),
         )
         product_id = cursor.lastrowid
-        for image in images:
+        for index, image in enumerate(images):
             if image.filename == "":
                 continue
+            is_primary = 1 if index == 0 else 0
             upload = cloudinary.uploader.upload(image, folder="MONO_Products")
             image_url = upload["secure_url"]
             cursor.execute(
-                """INSERT INTO product_images (product_id, image_url) VALUES (?, ?);""",
+                """INSERT INTO product_images (product_id, image_url, is_primary) VALUES (?, ?, ?);""",
                 (
                     product_id,
                     image_url,
+                    is_primary,
                 ),
             )
         connection.commit()

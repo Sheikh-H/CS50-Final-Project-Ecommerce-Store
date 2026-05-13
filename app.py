@@ -85,9 +85,16 @@ def add_new_products():
         price = request.form.get("price")
         brand = request.form.get("brand")
         qty = request.form.get("quantity")
-        images = request.files.getlist("image")
+        images = request.form.getlist("images")
         success, message = add_product(
-            name, description, gender, category, price, brand, qty, images
+            name,
+            description,
+            gender,
+            category,
+            price,
+            brand,
+            qty,
+            images,
         )
     return render_template("pages/add_new_products.html", title=title, message=message)
 
@@ -99,16 +106,14 @@ def modify_products():
     message = ""
     connection = connect_db()
     cursor = connection.cursor()
-    cursor.execute("""
-        SELECT DISTINCT *
-        FROM products 
-        JOIN product_images 
-        ON 
-        products.product_id = product_images.product_id;
-        """)
+    cursor.execute(""" SELECT DISTINCT * FROM products;""")
     products = cursor.fetchall()
+    cursor.execute(""" SELECT * FROM product_images;""")
+    images = cursor.fetchall()
     connection.close()
-    return render_template("pages/modify_products.html", title=title, products=products)
+    return render_template(
+        "pages/modify_products.html", title=title, products=products, images=images
+    )
 
 
 @app.route("/dashboard", methods=["GET", "POST"])
