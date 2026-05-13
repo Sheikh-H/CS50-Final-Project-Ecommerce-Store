@@ -1,0 +1,36 @@
+{% extends 'layout.html' %} {% block content %}
+<section>
+  <div class="flex w-full flex-col gap-5 p-5">
+    {% for product in products %}
+    <div
+      class="flex w-full items-center justify-between gap-2 rounded-2xl border p-1"
+    >
+      <p>{{product['product_id']}}</p>
+      <p>{{product['product_name']}}</p>
+      <div class="h-[100px] w-[1000px] overflow-scroll border text-center">
+        <p>{{product['product_description']}}</p>
+      </div>
+      <p>£{{product['product_price']}}</p>
+      <p>{{product['product_category']}}</p>
+      <p>{{product['product_is_active']}}</p>
+      <p>{{product['product_brand']}}</p>
+      <p>{{product['product_stock_qty']}}</p>
+      <p>{{product['product_gender']}}</p>
+      <p>{{product['product_created_at']}}</p>
+      <div>
+        <img
+          src="{{ product['image_url'] }}"
+          alt="Product Image"
+          class="h-24 w-24"
+        />
+      </div>
+      <div>
+        <button class="pbutton" value="{{product['product_id']}}">
+          Select Product
+        </button>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

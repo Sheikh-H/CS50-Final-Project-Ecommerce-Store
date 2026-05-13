@@ -92,6 +92,36 @@ def add_new_products():
     return render_template("pages/add_new_products.html", title=title, message=message)
 
 
+@app.route("/modify_products", methods=["GET", "POST"])
+@admin_required
+def modify_products():
+    title = "Modify products"
+    message = ""
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute("""
+        SELECT DISTINCT
+        product_images.image_url, 
+        products.product_id, 
+        products.product_name, 
+        products.product_description, 
+        products.product_price, 
+        products.product_category, 
+        products.product_is_active, 
+        products.product_brand, 
+        products.product_stock_qty, 
+        products.product_gender, 
+        products.product_created_at 
+        FROM products 
+        JOIN product_images 
+        ON 
+        products.product_id = product_images.product_id;
+        """)
+    products = cursor.fetchall()
+    connection.close()
+    return render_template("pages/modify_products.html", title=title, products=products)
+
+
 @app.route("/dashboard", methods=["GET", "POST"])
 @admin_required
 def dashboard():
@@ -127,10 +157,19 @@ def account():
     return render_template("/pages/account.html", title=title, user=user)
 
 
+@app.route("/admin_logout")
+@admin_required
+def admin_logout():
+    session.clear()
+    session.modified = True
+    return redirect(url_for("admin"))
+
+
 @app.route("/logout")
 @login_required
 def logout():
     session.clear()
+    session.modified = True
     return redirect(url_for("home"))
 
 

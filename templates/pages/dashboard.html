@@ -1,19 +1,20 @@
 {% extends 'layout.html' %} {% block content %}
 <section>
-  <div class="flex flex-col">
-    <h3>Admin Dashboard</h3>
-    <p>Welcome {{username}}</p>
-    <p>What would you like to do?</p>
-    <div>
-      <div class="shadowcard">
-        <a href=" {{url_for('add_new_products')}} ">Add new products</a>
-      </div>
-      <div class="shadowcard">
-        <a href=" # ">Modify products</a>
-      </div>
-      <div class="shadowcard">
-        <a href=" # ">Add Admin User</a>
-      </div>
+  <div class="w-full p-2">
+    <div class="items-center text-center">
+      <h3>Dashboard</h3>
+      <p>Welcome {{username}}</p>
+      <p>What would you like to do?</p>
+    </div>
+    <div class="border">
+      <h4>Manage Products:</h4>
+      <p><a href=" {{url_for('add_new_products')}} ">Add New Product</a></p>
+      <p><a href=" {{url_for('modify_products')}} ">Modify a Product</a></p>
+      <h4>Manage Admins:</h4>
+      <p><a href=" # ">Add Admin User</a></p>
+      <p><a href=" # ">Modify Admin User</a></p>
+      <h4>Manage Customers:</h4>
+      <p><a href=" # ">Modify Customer</a></p>
     </div>
   </div>
 </section>

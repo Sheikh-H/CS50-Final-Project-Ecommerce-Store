@@ -1,0 +1,15 @@
+<div class="flex items-center justify-between border-b border-red-900/50 p-1">
+  <div>
+    <h3>Admin</h3>
+  </div>
+  <div>
+    <nav>
+      <ul class="flex gap-5">
+        {% if session['admin_id']%}
+        <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ url_for('admin_logout') }}">Logout</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</div>

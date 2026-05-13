@@ -32,7 +32,11 @@
     />
   </head>
   <body class="overflow-x-hidden">
+    {% if session['admin_id'] == true %}
+    <header>{% include 'parts/admin_header.html' %}</header>
+    {% else %}
     <header>{% include 'parts/header.html' %}</header>
+    {% endif %}
     <main>{% block content %}{% endblock %}</main>
     <footer>{% include 'parts/footer.html' %}</footer>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
