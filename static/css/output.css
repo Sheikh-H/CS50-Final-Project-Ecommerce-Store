@@ -263,17 +263,8 @@
   .w-9\/10 {
     width: calc(9 / 10 * 100%);
   }
-  .w-10 {
-    width: calc(var(--spacing) * 10);
-  }
   .w-24 {
     width: calc(var(--spacing) * 24);
-  }
-  .w-52 {
-    width: calc(var(--spacing) * 52);
-  }
-  .w-\[500px\] {
-    width: 500px;
   }
   .w-\[1000px\] {
     width: 1000px;

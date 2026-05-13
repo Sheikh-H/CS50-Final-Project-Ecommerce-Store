@@ -100,18 +100,7 @@ def modify_products():
     connection = connect_db()
     cursor = connection.cursor()
     cursor.execute("""
-        SELECT DISTINCT
-        product_images.image_url, 
-        products.product_id, 
-        products.product_name, 
-        products.product_description, 
-        products.product_price, 
-        products.product_category, 
-        products.product_is_active, 
-        products.product_brand, 
-        products.product_stock_qty, 
-        products.product_gender, 
-        products.product_created_at 
+        SELECT DISTINCT *
         FROM products 
         JOIN product_images 
         ON 
