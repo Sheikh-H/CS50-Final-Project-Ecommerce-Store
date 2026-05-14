@@ -72,7 +72,7 @@ def admin():
             session.permanent = True
             return redirect(url_for("dashboard"))
         message = error
-    return render_template("pages/admin_login.html", title=title, message=message)
+    return render_template("pages/admin/admin_login.html", title=title, message=message)
 
 
 # This function was built with the help of AI
@@ -123,7 +123,7 @@ def add_new_products():
             message = "Please insert at least one image"
             title = "Add new products"
             return render_template(
-                "pages/add_new_products.html", title=title, message=message
+                "pages/admin/add_new_products.html", title=title, message=message
             )
         success, message = add_product(
             name,
@@ -135,7 +135,7 @@ def add_new_products():
             qty,
             images,
         )
-    return render_template("pages/add_new_products.html", title=title, message=message)
+    return render_template("pages/admin/add_new_products.html", title=title, message=message)
 
 
 @app.route("/modify_products/<int:product_id>", methods=["GET", "POST"])
@@ -201,14 +201,14 @@ def modify_a_product(product_id):
         connection.close()
         if not success:
             return render_template(
-                "pages/modify_product.html",
+                "pages/admin/modify_product.html",
                 title=title,
                 product=product,
                 images=images,
                 message=message,
             )
     return render_template(
-        "pages/modify_product.html",
+        "pages/admin/modify_product.html",
         title=title,
         product=product,
         images=images,
@@ -229,7 +229,7 @@ def modify_products():
     images = cursor.fetchall()
     connection.close()
     return render_template(
-        "pages/modify_products.html", title=title, products=products, images=images
+        "pages/admin/modify_products.html", title=title, products=products, images=images
     )
 
 
@@ -245,7 +245,7 @@ def dashboard():
     admin = cursor.fetchone()
     connection.close()
     return render_template(
-        "pages/dashboard.html", title=title, username=admin["username"]
+        "pages/admin/dashboard.html", title=title, username=admin["username"]
     )
 
 
@@ -265,7 +265,7 @@ def account():
     cursor.execute("""SELECT * FROM users WHERE user_id = ?;""", (user_id,))
     user = cursor.fetchone()
     connection.close()
-    return render_template("/pages/account.html", title=title, user=user)
+    return render_template("pages/customer/account.html", title=title, user=user)
 
 
 @app.route("/admin_logout")
@@ -313,7 +313,7 @@ def register():
         password = request.form.get("password")
         address = request.form.get("address")
         succes, message = add_new_user(firstname, surname, email, password, address)
-    return render_template("/pages/register.html", title=title, message=message)
+    return render_template("pages/customer/register.html", title=title, message=message)
 
 
 if __name__ == "__main__":
