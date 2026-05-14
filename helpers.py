@@ -8,6 +8,11 @@ from datetime import datetime
 import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 
 def date_time():

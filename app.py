@@ -17,6 +17,7 @@ date_now = date_time()
 
 load_dotenv()
 
+
 # This is for uploading all images like product images which are then pulled from online source allowing for admin users to create and add new products
 cloudinary.config(
     cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
