@@ -135,7 +135,9 @@ def add_new_products():
             qty,
             images,
         )
-    return render_template("pages/admin/add_new_products.html", title=title, message=message)
+    return render_template(
+        "pages/admin/add_new_products.html", title=title, message=message
+    )
 
 
 @app.route("/modify_products/<int:product_id>", methods=["GET", "POST"])
@@ -229,7 +231,10 @@ def modify_products():
     images = cursor.fetchall()
     connection.close()
     return render_template(
-        "pages/admin/modify_products.html", title=title, products=products, images=images
+        "pages/admin/modify_products.html",
+        title=title,
+        products=products,
+        images=images,
     )
 
 
