@@ -137,7 +137,9 @@ def add_product(name, description, gender, category, price, brand, qty, images):
             if image.filename == "":
                 continue
             is_primary = 1 if index == 0 else 0
-            upload = cloudinary.uploader.upload(image, folder="MONO_Products")
+            upload = cloudinary.uploader.upload(
+                image, folder="MONO_Products"
+            )  # This is the function that uploads an image to cloudinary and then returns the url of it's location which is then used for each image.
             image_url = upload["secure_url"]
             cursor.execute(
                 """INSERT INTO product_images (product_id, image_url, is_primary) VALUES (?, ?, ?);""",

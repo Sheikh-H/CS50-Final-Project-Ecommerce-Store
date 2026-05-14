@@ -89,6 +89,20 @@ def delete_product(product_id):
     return redirect(url_for("modify_products"))
 
 
+@app.route("/delete_image/<int:product_id>/<int:image_id>", methods=["POST"])
+@admin_required
+def delete_image(product_id, image_id):
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute(
+        """DELETE FROM product_images WHERE image_id = ?;""",
+        (image_id,),
+    )
+    connection.commit()
+    connection.close()
+    return redirect(url_for("modify_a_product", product_id=product_id))
+
+
 @app.route("/add_new_products", methods=["GET", "POST"])
 @admin_required
 def add_new_products():
