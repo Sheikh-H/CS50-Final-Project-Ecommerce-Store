@@ -136,7 +136,6 @@ def modify_a_product(product_id):
     )
     images = cursor.fetchall()
     title = f"Modify {product['product_name']}"
-    connection.close()
     if request.method == "POST":
         name = request.form.get("name")
         description = request.form.get("description")
