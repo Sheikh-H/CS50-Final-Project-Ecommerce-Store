@@ -1,2 +1,12 @@
 {% extends 'layout.html' %} {% block content %}
+<section>
+  <div
+    class="flex h-screen w-full flex-col bg-cover bg-fixed bg-center p-5"
+    style="background-image: url( '{{ url_for('static', filename='media/storeimage.png') }}' );"
+  >
+    <div class="h-full w-full rounded-xl">
+      <h1>Welcome to MONO</h1>
+    </div>
+  </div>
+</section>
 {% endblock %}

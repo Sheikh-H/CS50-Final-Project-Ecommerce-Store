@@ -256,7 +256,7 @@ def dashboard():
 
 @app.route("/about")
 def about():
-    title = "About Us"
+    title = "About MONO"
     return render_template("pages/about.html", title=title)
 
 
