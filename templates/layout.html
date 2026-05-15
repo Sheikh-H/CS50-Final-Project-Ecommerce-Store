@@ -32,7 +32,7 @@
     />
   </head>
   <body class="overflow-x-hidden">
-    {% if session['admin_id'] == true %}
+    {% if session['admin_id'] %}
     <header>{% include 'parts/admin_header.html' %}</header>
     {% else %}
     <header>{% include 'parts/header.html' %}</header>

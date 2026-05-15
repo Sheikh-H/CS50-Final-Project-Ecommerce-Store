@@ -5,7 +5,7 @@
   <div>
     <nav>
       <ul class="flex gap-5">
-        {% if session['admin_id']%}
+        {% if session['admin_id'] %}
         <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
         <li><a href="{{ url_for('admin_logout') }}">Logout</a></li>
         {% endif %}

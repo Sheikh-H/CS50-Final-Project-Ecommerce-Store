@@ -67,9 +67,7 @@ def admin():
             session.clear()
             session.modified = True
             session["admin_id"] = admin["admin_id"]
-            print(session["admin_id"])
             session["admin_role"] = admin["role"]
-            print(session["admin_role"])
             session.permanent = True
             return redirect(url_for("dashboard"))
         message = error
