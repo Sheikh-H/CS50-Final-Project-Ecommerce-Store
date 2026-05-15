@@ -1,0 +1,20 @@
+{% extends 'layout.html' %} {% block content %}
+<section>
+  <div>
+    {% if message %}
+    <p>{{message}}</p>
+    {% endif %}
+  </div>
+  <div>
+    <h3>Modify Admin:</h3>
+    <form>
+      <label for="admin_id">Admin ID:</label>
+      <select name="admin_id">
+        {% for id in admins['admin_id'] %}
+        <option value="{{id}}">{{id}}</option>
+        {% endfor %}
+      </select>
+    </form>
+  </div>
+</section>
+{% endblock %}

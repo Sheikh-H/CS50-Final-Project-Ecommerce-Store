@@ -9,15 +9,26 @@ import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+
+def connect_db():
+    connection = sqlite3.connect("instance/shop.db", timeout=10)
+    connection.execute("PRAGMA foreign_keys = ON")
+    connection.row_factory = sqlite3.Row
+    return connection
 
 
 def date_time():
     date = datetime.now()
     now = date.strftime("%d/%m/%Y %H:%M")
     return now
+
+
+def existing_admins():
+    connection = connect_db()
+    cursor = connection.cursor()
+    admins = cursor.execute("""SELECT * FROM admins;""")
+    return admins
 
 
 # Same function made for admins to prevent url hacking
@@ -33,31 +44,34 @@ def admin_required(f):
 
 
 def add_admin_function(role, name, username, password):
+    username = username
     connection = connect_db()
     cursor = connection.cursor()
+    now = date_time()
+    cursor.execute(""" SELECT * FROM admins WHERE username = ?; """, (username,))
+    existing_username = cursor.fetchone()
 
-    cursor.execute(""" SELECT username FROM admins; """)
-    current_usernames = cursor.fetchall()
+    if existing_username:
+        return False, "Username Already Taken"
 
-    if username in current_usernames:
-        return False, "Username already exists"
+    hashed_password = argon2.PasswordHasher().hash(password)
+
     try:
-        hashed_password = argon2.PasswordHasher().hash(password)
-
         cursor.execute(
-            """INSERT INTO admins (role, name, username, password, created_at) VALUES (?, ?, ?, ?, ?);""",
+            """INSERT INTO admins (role, name, username, password, admin_created_at) VALUES (?, ?, ?, ?, ?);""",
             (
                 role,
                 name,
                 username,
                 hashed_password,
-                date_time(),
+                now,
             ),
         )
         connection.commit()
-        return True, "Admin Created successfully!"
-    except:
-        return False, "Unable to create admin"
+        return True, "Admin has been added!"
+    except Exception as e:
+        print(e)
+        return False, "Unable to add admin"
     finally:
         connection.close()
 
@@ -91,13 +105,6 @@ def login_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
-
-
-def connect_db():
-    connection = sqlite3.connect("instance/shop.db", timeout=10)
-    connection.execute("PRAGMA foreign_keys = ON")
-    connection.row_factory = sqlite3.Row
-    return connection
 
 
 def user_login(email, password):

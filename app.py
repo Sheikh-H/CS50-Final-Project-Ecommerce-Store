@@ -15,8 +15,6 @@ app = Flask(__name__)
 
 date_now = date_time()
 
-load_dotenv()
-
 
 # This is for uploading all images like product images which are then pulled from online source allowing for admin users to create and add new products
 cloudinary.config(
@@ -82,13 +80,22 @@ def add_admin():
     title = "Add new admin"
     message = ""
     if request.method == "POST":
-        role = request.form.get("role")
-        name = request.form.get("name")
-        username = request.form.get("username")
-        password = request.form.get("password")
+        role = request.form.get("role").strip()
+        name = request.form.get("name").strip()
+        username = request.form.get("username").strip().lower()
+        password = request.form.get("password").strip()
         success, message = add_admin_function(role, name, username, password)
-
     return render_template("pages/admin/add_admin.html", title=title, message=message)
+
+
+app.route("", methods=["GET", "POST"])
+
+
+@admin_required
+def modify_admins():
+    title = "Modify Admin"
+    admins = existing_admins()
+    return render_template("pages/admin/modify_admin.html", title=title, admins=admins)
 
 
 # This function was built with the help of AI
