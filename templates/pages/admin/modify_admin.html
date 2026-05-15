@@ -7,13 +7,24 @@
   </div>
   <div>
     <h3>Modify Admin:</h3>
-    <form>
+    <form action="/modify_admins" method="post">
+      {% for admin in admins %}
       <label for="admin_id">Admin ID:</label>
       <select name="admin_id">
-        {% for id in admins['admin_id'] %}
-        <option value="{{id}}">{{id}}</option>
-        {% endfor %}
+        <option value="{{admin['admin_id']}}">{{ admin['admin_id'] }}</option>
       </select>
+      <label for="name">Admin Name:</label>
+      <input type="text" value="{{admin['name']}}" />
+
+      <label for="role">Role:</label>
+      <select name="role">
+        <option value="{{admin['role']}}">{{ admin['role']}}</option>
+      </select>
+
+      <label for="password">Update Password:</label>
+      <input name="password" type="password" value="{{admin['password']}}" />
+      {% endfor %}
+      <button class="pbutton p-1" type="submit">Update Admin Details</button>
     </form>
   </div>
 </section>

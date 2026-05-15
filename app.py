@@ -88,9 +88,7 @@ def add_admin():
     return render_template("pages/admin/add_admin.html", title=title, message=message)
 
 
-app.route("", methods=["GET", "POST"])
-
-
+@app.route("/modify_admins", methods=["GET", "POST"])
 @admin_required
 def modify_admins():
     title = "Modify Admin"
