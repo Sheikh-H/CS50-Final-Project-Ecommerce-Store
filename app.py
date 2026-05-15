@@ -67,7 +67,9 @@ def admin():
             session.clear()
             session.modified = True
             session["admin_id"] = admin["admin_id"]
+            print(session["admin_id"])
             session["admin_role"] = admin["role"]
+            print(session["admin_role"])
             session.permanent = True
             return redirect(url_for("dashboard"))
         message = error
@@ -80,7 +82,7 @@ def add_admin():
     title = "Add new admin"
     message = ""
     if request.method == "POST":
-        role = request.form.get("role").strip()
+        role = request.form.get("role").strip().lower()
         name = request.form.get("name").strip()
         username = request.form.get("username").strip().lower()
         password = request.form.get("password").strip()
