@@ -91,9 +91,18 @@ def add_admin():
 @app.route("/modify_admins", methods=["GET", "POST"])
 @admin_required
 def modify_admins():
+    message = ""
     title = "Modify Admin"
     admins = existing_admins()
-    return render_template("pages/admin/modify_admin.html", title=title, admins=admins)
+    if request.method == "POST":
+        admin_id = request.form.get("admin_id")
+        name = request.form.get("name").title().strip()
+        role = request.form.get("role").lower()
+        password = request.form.get("password", "").strip()
+        success, message = update_admin(admin_id, name, role, password)
+    return render_template(
+        "pages/admin/modify_admin.html", title=title, admins=admins, message=message
+    )
 
 
 # This function was built with the help of AI

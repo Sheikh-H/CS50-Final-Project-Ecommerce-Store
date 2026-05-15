@@ -8,28 +8,30 @@
   <div>
     <h3>Modify Admin:</h3>
     {% for admin in admins %}
+    <div class="flex gap-10 rounded-2xl border p-1">
+      <form action="/modify_admins" method="post">
+        <label for="admin_id">Admin ID: {{admin['admin_id']}} </label>
+        <input type="hiden" name="admin_id" value="{{ admin['admin_id'] }}" />
 
-    <form action="/modify_admins" method="post">
-      <label for="admin_id">Admin ID:</label>
-      <select name="admin_id">
-        <option value="{{ admin['admin_id'] }}">
-          ID: {{ admin['admin_id'] }}
-        </option>
-      </select>
+        <label for="name">Admin Name:</label>
+        <input name="name" type="text" value="{{ admin['name'] }}" />
 
-      <label for="name">Admin Name:</label>
-      <input type="text" value="{{ admin['name'] }}" />
+        <label for="role">Role:</label>
+        <select name="role">
+          <option value="{{ admin['role'] }}" selected>
+            {{ admin['role']}}
+          </option>
+          <option value="owner">Owner</option>
+          <option value="admin">Admin</option>
+          <option value="manager">Manager</option>
+        </select>
 
-      <label for="role">Role:</label>
-      <select name="role">
-        <option value="{{ admin['role'] }}">{{ admin['role']}}</option>
-      </select>
+        <label for="password">Update Password:</label>
+        <input name="password" type="password" />
 
-      <label for="password">Update Password:</label>
-      <input name="password" type="password" />
-      <button class="pbutton p-1" type="submit">Update Admin Details</button>
-    </form>
-    <br />
+        <button class="pbutton p-1" type="submit">Update Admin</button>
+      </form>
+    </div>
     {% endfor %}
   </div>
 </section>

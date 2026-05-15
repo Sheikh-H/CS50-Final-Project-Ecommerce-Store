@@ -24,11 +24,55 @@ def date_time():
     return now
 
 
+def update_admin(admin_id, name, role, password):
+    connection = connect_db()
+    cursor = connection.cursor()
+    if role not in ["owner", "admin", "manager"]:
+        return False, "Please enter correct role"
+    try:
+        if password != "":
+            hashed_password = argon2.PasswordHasher().hash(password)
+            cursor.execute(
+                """UPDATE admins SET name = ?, role = ?, password = ? WHERE admin_id = ?;""",
+                (
+                    name,
+                    role,
+                    hashed_password,
+                    admin_id,
+                ),
+            )
+            connection.commit()
+            return True, "Admin Details Updated!"
+        else:
+            cursor.execute(
+                """UPDATE admins SET name = ?, role = ? WHERE admin_id = ?;""",
+                (
+                    name,
+                    role,
+                    admin_id,
+                ),
+            )
+            connection.commit()
+            return True, "Admin Details Updated!"
+    except Exception as e:
+        print(e)
+        return False, "Unable to update admin"
+    finally:
+        connection.close()
+
+
 def existing_admins():
     connection = connect_db()
     cursor = connection.cursor()
-    admins = cursor.execute("""SELECT * FROM admins;""")
-    return admins
+    try:
+        cursor.execute("""SELECT * FROM admins;""")
+        admins = cursor.fetchall()
+        return admins
+    except Exception as e:
+        print(e)
+        return False
+    finally:
+        connection.close()
 
 
 # Same function made for admins to prevent url hacking
