@@ -24,10 +24,62 @@ def date_time():
     return now
 
 
+def update_customer(user_id, fname, sname, email, password, address):
+    connection = connect_db()
+    cursor = connection.cursor()
+    try:
+        hashed_password = argon2.PasswordHasher().hash(password)
+        if password != "":
+            cursor.execute(
+                """UPDATE users SET firstname = ?, surname = ?, email = ?, password = ?, address = ? WHERE user_id = ?;""",
+                (
+                    fname,
+                    sname,
+                    email,
+                    hashed_password,
+                    address,
+                    user_id,
+                ),
+            )
+            connection.commit()
+        else:
+            cursor.execute(
+                """UPDATE users SET firstname = ?, surname = ?, email = ?, address = ? WHERE user_id = ?;""",
+                (
+                    fname,
+                    sname,
+                    email,
+                    address,
+                    user_id,
+                ),
+            )
+            connection.commit()
+        return True, "Customer Details Updated!"
+    except Exception as e:
+        print(e)
+        return False, "Unable to moify customer details"
+    finally:
+        connection.close()
+
+
+def existing_customers():
+    connection = connect_db()
+    cursor = connection.cursor()
+    try:
+        cursor.execute("""SELECT * FROM users;""")
+        customers = cursor.fetchall()
+        return True, customers
+    except Exception as e:
+        print(e)
+        return False, "Unable to retrieve data"
+    finally:
+        connection.close()
+
+
 def update_admin(admin_id, name, role, password):
     connection = connect_db()
     cursor = connection.cursor()
-    if role not in ["owner", "admin", "manager"]:
+    if role not in ["owner", "admin"]:
         return False, "Please enter correct role"
     try:
         if password != "":

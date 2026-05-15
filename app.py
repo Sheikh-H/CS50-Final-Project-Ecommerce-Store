@@ -93,6 +93,8 @@ def add_admin():
 def modify_admins():
     message = ""
     title = "Modify Admin"
+    if session["admin_role"] != "owner":
+        message = "Restricted Access"
     admins = existing_admins()
     if request.method == "POST":
         admin_id = request.form.get("admin_id")
@@ -102,6 +104,30 @@ def modify_admins():
         success, message = update_admin(admin_id, name, role, password)
     return render_template(
         "pages/admin/modify_admin.html", title=title, admins=admins, message=message
+    )
+
+
+@app.route("/modify_customer", methods=["GET", "POST"])
+@admin_required
+def modify_customers():
+    message = ""
+    title = "Modify customers"
+    success, customers = existing_customers()
+    if request.method == "POST":
+        user_id = request.form.get("user_id")
+        fname = request.form.get("firstname").strip().title()
+        sname = request.form.get("surname").strip().title()
+        email = request.form.get("email").strip()
+        password = request.form.get("password", "").strip()
+        address = request.form.get("address").strip()
+        success, message = update_customer(
+            user_id, fname, sname, email, password, address
+        )
+    return render_template(
+        "pages/admin/modify_customers.html",
+        title=title,
+        customers=customers,
+        message=message,
     )
 
 

@@ -1,0 +1,37 @@
+{% extends 'layout.html' %} {% block content %}
+<section>
+  <div>
+    {% if message %}
+    <p>{{message}}</p>
+    {% endif %}
+  </div>
+  <div>
+    <h3>Modify Admin:</h3>
+    {% for customer in customers %}
+    <div class="flex gap-10 rounded-2xl border p-1">
+      <form action="/modify_customer" method="post">
+        <label>Customer ID: {{ customer['user_id'] }}</label>
+        <input name="user_id" type="hidden" value="{{customer['user_id']}}" />
+
+        <label>First Name:</label>
+        <input name="firstname" type="text" value="{{customer['firstname']}}" />
+
+        <label>Last Name:</label>
+        <input name="surname" type="text" value="{{customer['surname']}}" />
+
+        <label>Email (username):</label>
+        <input name="email" type="email" value="{{customer['email']}}" />
+
+        <label>Password:</label>
+        <input name="password" type="password" />
+
+        <label>Address:</label>
+        <input name="address" type="text" value="{{customer['address']}}" />
+
+        <button class="pbutton p-1" type="submit">Update Customer</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
