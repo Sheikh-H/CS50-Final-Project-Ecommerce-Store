@@ -69,10 +69,26 @@ def admin():
             session.clear()
             session.modified = True
             session["admin_id"] = admin["admin_id"]
+            session["admin_role"] = admin["role"]
             session.permanent = True
             return redirect(url_for("dashboard"))
         message = error
     return render_template("pages/admin/admin_login.html", title=title, message=message)
+
+
+@app.route("/add_admin", methods=["GET", "POST"])
+@admin_required
+def add_admin():
+    title = "Add new admin"
+    message = ""
+    if request.method == "POST":
+        role = request.form.get("role")
+        name = request.form.get("name")
+        username = request.form.get("username")
+        password = request.form.get("password")
+        success, message = add_admin_function(role, name, username, password)
+
+    return render_template("pages/admin/add_admin.html", title=title, message=message)
 
 
 # This function was built with the help of AI

@@ -14,7 +14,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-
 def date_time():
     date = datetime.now()
     now = date.strftime("%d/%m/%Y %H:%M")
@@ -31,6 +30,36 @@ def admin_required(f):
         return f(*args, **kwargs)
 
     return decorated_function
+
+
+def add_admin_function(role, name, username, password):
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute(""" SELECT username FROM admins; """)
+    current_usernames = cursor.fetchall()
+
+    if username in current_usernames:
+        return False, "Username already exists"
+    try:
+        hashed_password = argon2.PasswordHasher().hash(password)
+
+        cursor.execute(
+            """INSERT INTO admins (role, name, username, password, created_at) VALUES (?, ?, ?, ?, ?);""",
+            (
+                role,
+                name,
+                username,
+                hashed_password,
+                date_time(),
+            ),
+        )
+        connection.commit()
+        return True, "Admin Created successfully!"
+    except:
+        return False, "Unable to create admin"
+    finally:
+        connection.close()
 
 
 def admin_login_function(username, password):

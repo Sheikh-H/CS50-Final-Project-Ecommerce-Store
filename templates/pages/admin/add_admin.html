@@ -1,0 +1,34 @@
+{% extends 'layout.html' %} {% block content %}
+<section>
+  <div>
+    {% if message %}
+    <p>{{message}}</p>
+    {% endif %}
+  </div>
+  <div>
+    <h3>Create New Admin User</h3>
+    <form action="/add_admin" method="post">
+      <label for="">Full Name:</label>
+      <input type="text" name="name" />
+
+      <label for="username">Username:</label>
+      <input name="username" type="text" />
+
+      <label for="password">Password:</label>
+      <input name="password" type="password" />
+
+
+
+      <label for="role">Select role</label>
+      <select name="role">
+        <option value="Owner">Owner</option>
+        <option value="Owner">Manager</option>
+        <option value="Admin">Admin</option>
+      </select>
+      
+      <button class="pbutton p-1" type="submit">Add Admin User</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
+<!-- the enctype I have included as instructed by ChatGPT as this is what helps the backend (flask) recieve each file as there is also more than one I also added the acept="image/*" to prevent none image uploads (CHATGPT recommended) -->
