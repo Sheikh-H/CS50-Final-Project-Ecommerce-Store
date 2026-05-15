@@ -21,7 +21,7 @@
     <nav class="flex">
       <ul class="flex gap-2 font-bold">
         <li><a href="{{ url_for('home') }}">Home</a></li>
-        <li><a href="#">Shop</a></li>
+        <li><a href="{{ url_for('all_products')}}">Shop</a></li>
         <li><a href="{{ url_for('about') }}">About</a></li>
         {% if not session %}
         <li><a href="{{ url_for('login') }}">Login/Register</a></li>
@@ -113,7 +113,7 @@
       <li
         class="flex h-10 w-full items-center justify-between border-b border-b-amber-500/50 p-1 text-center align-middle"
       >
-        <a href="#">Categories</a>
+        <a href="{{ url_for('all_products') }}">Shop</a>
         <div class="h-2 w-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -132,26 +132,7 @@
           </svg>
         </div>
       </li>
-      <li
-        class="flex h-10 w-3/4 items-center justify-between border-b border-b-red-500/50 p-1 text-center align-middle"
-      >
-        MENS
-      </li>
-      <li
-        class="flex h-10 w-3/4 items-center justify-between border-b border-b-red-500/50 p-1 text-center align-middle"
-      >
-        WOMENS
-      </li>
-      <li
-        class="flex h-10 w-3/4 items-center justify-between border-b border-b-red-500/50 p-1 text-center align-middle"
-      >
-        CHILDRENS
-      </li>
-      <li
-        class="flex h-10 w-3/4 items-center justify-between border-b border-b-red-500/50 p-1 text-center align-middle"
-      >
-        ACCESSORIES
-      </li>
+
       {% if not session %}
       <li
         class="flex h-10 w-full items-center justify-between border-b border-b-amber-500/50 p-1 text-center align-middle"

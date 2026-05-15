@@ -9,7 +9,7 @@ import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
 import os
-
+    
 
 def connect_db():
     connection = sqlite3.connect("instance/shop.db", timeout=10)
@@ -23,6 +23,18 @@ def date_time():
     now = date.strftime("%d/%m/%Y %H:%M")
     return now
 
+def load_products():
+    connection = connect_db()
+    cursor = connection.cursor()
+    try:
+        cursor.execute("""SELECT * FROM products;""")
+        products = cursor.fetchall()
+        return True, products
+    except Exception as e:
+        print(e)
+        return False, None
+    finally:
+        connection.close()
 
 def update_customer(user_id, fname, sname, email, password, address):
     connection = connect_db()
