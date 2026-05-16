@@ -1,13 +1,24 @@
 {% extends 'layout.html' %} {% block content %}
-
 <section>
-  <div class="flex">
-    <div class="card">
-      <h3>product name</h3>
-      <img src="{{#}}" />
-      <p>description</p>
-      <p>Price</p>
-      <button class="pbutton">Add to cart</button>
+  <h1>All Products</h1>
+</section>
+<section>
+  <div class="p-1">
+    <div class="flex gap-2">
+      {% for product in products %}
+      <div class="card flex h-100 w-100 flex-col items-center justify-center">
+        <h3>{{product['product_name']}}</h3>
+        <img
+          src="{{ product['image_url'] }}"
+          alt="{{product['product_name']}}"
+        />
+        <div class="h-10 w-full border bg-white">
+          <p>{{product['product_description']}}</p>
+        </div>
+        <p>£{{product['product_price']}}</p>
+        <button class="pbutton">Add to cart</button>
+      </div>
+      {% endfor %}
     </div>
   </div>
 </section>

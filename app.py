@@ -56,8 +56,8 @@ def home():
 @app.route("/all_products", methods=["GET", "POST"])
 def all_products():
     title = "All products"
-    products = load_products()
-    return render_template("", title=title, products=products)
+    success, products = load_products()
+    return render_template("pages/all_products.html", title=title, products=products)
 
 
 @app.route("/admin", methods=["GET", "POST"])
