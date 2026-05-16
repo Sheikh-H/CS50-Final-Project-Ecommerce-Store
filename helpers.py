@@ -23,7 +23,6 @@ def date_time():
     now = date.strftime("%d/%m/%Y %H:%M")
     return now
 
-
 def load_products():
     connection = connect_db()
     cursor = connection.cursor()

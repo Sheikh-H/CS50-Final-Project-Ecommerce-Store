@@ -53,6 +53,41 @@ def home():
     return render_template("pages/home.html", title=title)
 
 
+@app.route("/add_to_cart", methods=["GET", "POST"])
+@login_required
+def add_to_cart():
+    return render_template(
+        "pages/cart.html",
+    )
+
+
+@app.route("/product_info/<int:product_id>", methods=["GET", "POST"])
+def product_page(product_id):
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """SELECT * FROM products WHERE product_id = ?;""",
+        (product_id,),
+    )
+
+    product = cursor.fetchone()
+
+    cursor.execute(
+        """ SELECT image_url FROM product_images WHERE product_id = ?;""",
+        (product_id,),
+    )
+
+    images = cursor.fetchall()
+
+    connection.close()
+
+    title = product["product_name"]
+
+    return render_template(
+        "pages/product_page.html", product=product, images=images, title=title
+    )
+
 
 @app.route("/all_products", methods=["GET", "POST"])
 def all_products():

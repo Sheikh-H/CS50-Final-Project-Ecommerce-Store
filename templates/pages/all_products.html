@@ -13,19 +13,27 @@
         <input
           type="hidden"
           name="product_id"
-          value="{{product['product_id']}}"
+          value="{{ product['product_id'] }}"
         />
         <div class="card flex flex-col items-center justify-center">
           <img
             src="{{ product['image_url'] }}"
-            alt="{{product['product_name']}}"
+            alt="{{ product['product_name'] }}"
             class="h-full w-full rounded-xl"
           />
           <div class="flex w-full flex-col items-center justify-center p-1">
             <h3>{{product['product_name']}}</h3>
             <p>£{{product['product_price']}}</p>
             <button class="pbutton" type="submit">Add to cart</button>
-            <button class="sbutton">View Product</button>
+            <button
+              class="sbutton"
+              formaction="{{ url_for('product_page', product_id = product['product_id'] )}}"
+              formmethod="get"
+              value="{{product['product_id']}}"
+              type="submit"
+            >
+              View Product
+            </button>
           </div>
         </div>
       </form>
