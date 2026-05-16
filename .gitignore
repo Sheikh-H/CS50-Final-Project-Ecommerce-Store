@@ -8,6 +8,7 @@ venv/
 
 # Flask session files
 flask_session/
+
 flask_session/*
 
 # Environment variables / secrets
@@ -20,7 +21,6 @@ instance/*.db
 node_modules/
 
 node_modules/*
-
 
 # VS Code settings
 .vscode/
