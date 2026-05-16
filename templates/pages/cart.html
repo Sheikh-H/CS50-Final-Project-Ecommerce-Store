@@ -17,7 +17,7 @@
 {% endfor %}
 
 <h2>Total: £{{ total }}</h2>
-<form action="" method="post">
+<form action="{{url_for('checkout')}}" method="post">
   <button class="pbutton p-2">Checkout</button>
 </form>
 {% else %}
