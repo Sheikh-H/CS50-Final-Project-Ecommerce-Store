@@ -53,6 +53,119 @@ def home():
     return render_template("pages/home.html", title=title)
 
 
+@app.route("/place_order", methods=["POST"])
+@login_required
+def place_order():
+
+    cart = session.get("cart", {})
+
+    if not cart:
+        return redirect(url_for("cart"))
+
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    total = 0
+    order_products = []
+
+    for product_id, quantity in cart.items():
+        cursor.execute(
+            """ SELECT * FROM products WHERE product_id = ?;""",
+            (product_id,),
+        )
+
+        product = cursor.fetchone()
+
+        if product:
+            subtotal = product["product_price"] * quantity
+
+            order_products.append(
+                {
+                    "product": product,
+                    "quantity": quantity,
+                }
+            )
+    cursor.execute(
+        """ INSERT INTO order (user_id, order_total_price, order_created_at,) VALUES (?, ?, ?);""",
+        (session["user_id"], total, date_time()),
+    )
+
+    order_id = cursor.lastrowid
+
+    for item in order_products:
+        product = item["product"]
+        quantity = item["quantity"]
+        cursor.execute(
+            """ INSERT INTO order_items (order_id, product_id, order_items_qty, order_items_price) VALUES (?, ?, ?, ?);""",
+            (
+                order_id,
+                product["product_id"],
+                quantity,
+                product["product_price"],
+            ),
+        )
+        cursor.execute(
+            """ UPDATE products SET product_stock_qty = product_stock_qty - ? WHERE product_id = ?;""",
+            (
+                quantity,
+                product["product_id"],
+            ),
+        )
+        connection.commit()
+        connection.close()
+
+        session["cart"] = {}
+        session.modified = True
+
+        return redirect(url_for("account"))
+
+
+@app.route("/checkout", methods=["GET", "POST"])
+@login_required
+def checkout():
+    title = "Checkout Page"
+    cart = session.get("cart", {})
+
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    products = []
+    total = 0
+
+    for product_id, quantity in cart.items():
+        cursor.execute(
+            """ SELECT * FROM products JOIN product_images ON products.product_id = product_images.product_id AND product_images.is_primary = 1 WHERE products.product_id = ?;""",
+            (product_id,),
+        )
+        product = cursor.fetchone()
+
+        if product:
+            subtotal = product["product_price"] * quantity
+            total += subtotal
+
+            products.append(
+                {
+                    "product": product,
+                    "quantity": quantity,
+                    "subtotal": subtotal,
+                }
+            )
+    cursor.execute(
+        """ SELECT * FROM users WHERE user_id = ?;""",
+        (session["user_id"],),
+    )
+
+    user = cursor.fetchone()
+
+    return render_template(
+        "pages/customer/checkout.html",
+        title=title,
+        products=products,
+        total=total,
+        user=user,
+    )
+
+
 @app.route("/cart")
 def cart():
     cart = session.get("cart", {})
@@ -62,7 +175,7 @@ def cart():
     total = 0.00
     for product_id, quantity in cart.items():
         cursor.execute(
-            """ SELECT * FROM products JOIN product_images ON products.products_id = product_images.product_id AND product_images.is_primary = 1 WHERE products.product_id = ?;""",
+            """ SELECT * FROM products JOIN product_images ON products.product_id = product_images.product_id AND product_images.is_primary = 1 WHERE products.product_id = ?;""",
             (product_id,),
         )
 
@@ -75,10 +188,10 @@ def cart():
             products.append(
                 {"product": product, "quantity": quantity, "subtotal": subtotal}
             )
-        connection.close()
-        return render_template(
-            "pages/cart.html", products - products, total=total, title="Shopping cart"
-        )
+    connection.close()
+    return render_template(
+        "pages/cart.html", products=products, total=total, title="Shopping cart"
+    )
 
 
 # Made with AI, first time making and using session though it looks quite easy

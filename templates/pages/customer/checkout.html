@@ -1,0 +1,34 @@
+{% extends 'layout.html' %} {% block content %}
+
+<h1>Checkout Summary</h1>
+
+<h2>Delivery Address</h2>
+
+<p>{{ user['firstname'] }} {{ user['surname'] }}</p>
+<p>{{ user['address'] }}</p>
+
+<hr />
+
+{% for item in products %}
+
+<div>
+  <img src="{{ item.product['image_url'] }}" width="150" />
+
+  <h3>{{ item.product['product_name'] }}</h3>
+
+  <p>Quantity: {{ item.quantity }}</p>
+
+  <p>Subtotal: £{{ item.subtotal }}</p>
+</div>
+
+{% endfor %}
+
+<hr />
+
+<h2>Total: £{{ total }}</h2>
+
+<form action="{{ url_for('place_order') }}" method="POST">
+  <button type="submit">Place Order</button>
+</form>
+
+{% endblock %}

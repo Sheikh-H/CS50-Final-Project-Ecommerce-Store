@@ -17,9 +17,13 @@
 {% endfor %}
 
 <h2>Total: £{{ total }}</h2>
-
+<form action="" method="post">
+  <button class="pbutton p-2">Checkout</button>
+</form>
 {% else %}
 
 <p>Your cart is empty.</p>
 
-{% endif %} {% endblock %}
+{% endif %}
+<!--  -->
+{% endblock %}
