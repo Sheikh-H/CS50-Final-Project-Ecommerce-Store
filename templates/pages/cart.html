@@ -1,0 +1,25 @@
+{% extends 'layout.html' %} {% block content %}
+
+<h1>Your Cart</h1>
+
+{% if products %} {% for item in products %}
+
+<div>
+  <img src="{{ item.product['image_url'] }}" width="200" />
+
+  <h3>{{ item.product['product_name'] }}</h3>
+
+  <p>Quantity: {{ item.quantity }}</p>
+
+  <p>Subtotal: £{{ item.subtotal }}</p>
+</div>
+
+{% endfor %}
+
+<h2>Total: £{{ total }}</h2>
+
+{% else %}
+
+<p>Your cart is empty.</p>
+
+{% endif %} {% endblock %}

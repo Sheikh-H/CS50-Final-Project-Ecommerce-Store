@@ -37,7 +37,7 @@ def after_request(response):
 # This is for session management and ensuring a timelimit of user inactivity on browser or once logged in.
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
-    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_SECURE=False,
     SESSION_COOKIE_SAMESITE="Lax",
     PERMANENT_SESSION_LIFETIME=timedelta(hours=1),
 )
@@ -51,6 +51,54 @@ app.secret_key = os.environ.get("SECRET_KEY")
 def home():
     title = "Home Page"
     return render_template("pages/home.html", title=title)
+
+
+@app.route("/cart")
+def cart():
+    cart = session.get("cart", {})
+    connection = connect_db()
+    cursor = connection.cursor()
+    products = []
+    total = 0.00
+    for product_id, quantity in cart.items():
+        cursor.execute(
+            """ SELECT * FROM products JOIN product_images ON products.products_id = product_images.product_id AND product_images.is_primary = 1 WHERE products.product_id = ?;""",
+            (product_id,),
+        )
+
+        product = cursor.fetchone()
+
+        if product:
+
+            subtotal = product["product_price"] * quantity
+            total += subtotal
+            products.append(
+                {"product": product, "quantity": quantity, "subtotal": subtotal}
+            )
+        connection.close()
+        return render_template(
+            "pages/cart.html", products - products, total=total, title="Shopping cart"
+        )
+
+
+# Made with AI, first time making and using session though it looks quite easy
+@app.route("/add_to_cart/<int:product_id>", methods=["POST"])
+def add_to_cart(product_id):
+    if "cart" not in session:
+        session["cart"] = {}
+
+    cart = session["cart"]
+
+    product_id = product_id
+
+    if product_id in cart:
+        cart[product_id] += 1
+    else:
+        cart[product_id] = 1
+
+    session["cart"] = cart
+    session.modified = True
+    return redirect(url_for("all_products"))
 
 
 @app.route("/all_products", methods=["GET", "POST"])

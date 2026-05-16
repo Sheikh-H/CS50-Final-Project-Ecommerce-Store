@@ -23,7 +23,9 @@
         <li><a href="{{ url_for('home') }}">Home</a></li>
         <li><a href="{{ url_for('all_products')}}">Shop</a></li>
         <li><a href="{{ url_for('about') }}">About</a></li>
-        {% if not session %}
+        {% if session['cart'] %}
+        <a href="{{ url_for('cart') }}">Cart</a>
+        {% endif %} {% if not session %}
         <li><a href="{{ url_for('login') }}">Login/Register</a></li>
         {% else %}
         <li><a href="{{ url_for('account') }}">My Account</a></li>

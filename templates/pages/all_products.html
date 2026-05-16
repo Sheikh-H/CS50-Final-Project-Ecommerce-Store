@@ -1,23 +1,33 @@
 {% extends 'layout.html' %} {% block content %}
+<section></section>
 <section>
-  <h1>All Products</h1>
-</section>
-<section>
-  <div class="p-1">
-    <div class="flex gap-2">
+  <div class="p-2">
+    <h1 class="text-center">All Products</h1>
+
+    <div class="grid grid-cols-4 gap-10">
       {% for product in products %}
-      <div class="card flex h-100 w-100 flex-col items-center justify-center">
-        <h3>{{product['product_name']}}</h3>
-        <img
-          src="{{ product['image_url'] }}"
-          alt="{{product['product_name']}}"
+      <form
+        action="{{ url_for('add_to_cart', product_id = product['product_id'] ) }}"
+        method="post"
+      >
+        <input
+          type="hidden"
+          name="product_id"
+          value="{{product['product_id']}}"
         />
-        <div class="h-10 w-full border bg-white">
-          <p>{{product['product_description']}}</p>
+        <div class="card flex flex-col items-center justify-center">
+          <img
+            src="{{ product['image_url'] }}"
+            alt="{{product['product_name']}}"
+            class="h-full w-full rounded-xl"
+          />
+          <div class="flex w-full flex-col items-center justify-center p-1">
+            <h3>{{product['product_name']}}</h3>
+            <p>£{{product['product_price']}}</p>
+            <button class="pbutton" type="submit">Add to cart</button>
+          </div>
         </div>
-        <p>£{{product['product_price']}}</p>
-        <button class="pbutton">Add to cart</button>
-      </div>
+      </form>
       {% endfor %}
     </div>
   </div>
