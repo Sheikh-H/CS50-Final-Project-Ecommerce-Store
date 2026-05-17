@@ -1,0 +1,627 @@
+.
+├── __pycache__
+│   ├── app.cpython-312.pyc
+│   └── helpers.cpython-312.pyc
+├── app.py
+├── data
+│   └── shop.db
+├── database_notes.txt
+├── flask_session
+│   ├── 0098bf3817d4874d43c3dbbd85c8cb38
+│   ├── 00e80cbca5268e71723021bc2059b599
+│   ├── 017532285a558037c9a40a36d3be06d0
+│   ├── 02178fe9d4d46ae0aa06753130fe354a
+│   ├── 080d57e1eb1c478f8b5cd7efbb7fe8a4
+│   ├── 098780717e3da737ffc060fda850fb1a
+│   ├── 09db86e26f62a014fed4c248e733deaa
+│   ├── 0af0edf612a4fa1a2ebff43e62b0ba2e
+│   ├── 0b8708d3a0bc6702605fa06d8514bc4d
+│   ├── 0ea2a6684fd4ea1409ae9196260f931f
+│   ├── 0eaaeaa3d2473c666f8161d5fe230e3f
+│   ├── 11700f89aa104e5bf96727ff1a902559
+│   ├── 11a2770cac396e1eeec3727cbea5dfa3
+│   ├── 1224ae5b95023c08a42730ca1523d34d
+│   ├── 1355e3f982781bee44c23b6da83a2e2b
+│   ├── 135ca8bec5d82899864850bbaec7f030
+│   ├── 179c7e55daba05f238ee764cc6ddffd5
+│   ├── 1932100e2cf7118a3a77226c726a4d50
+│   ├── 19435ec387ae14ef4e8721df26f80cec
+│   ├── 19b0db1444ffb6f7929667a8635d21bb
+│   ├── 19bc865f51bc0da26fee367abf847ecd
+│   ├── 19c58a1dd8a46d36b7f67ef927fcfe42
+│   ├── 1b1bc4a007e2f1345d34a9e46c51997c
+│   ├── 1b9b2266713a7cc3ae555f499793f951
+│   ├── 1ddee74ca1d1b1fd1ed7125e45e5f6ef
+│   ├── 1ea46230c9e0eaa788a977ffaac743ed
+│   ├── 1f14a6c0abd85fc4e1316bf084a558ef
+│   ├── 1ffeb25992f322b30eb16f083396e3e0
+│   ├── 2029240f6d1128be89ddc32729463129
+│   ├── 214ab6d6b553b07b075cb8dcabc416b5
+│   ├── 21edd4a8797656d150c18ad87254aef4
+│   ├── 224dbe0887cd589b6aa05355d9477ce6
+│   ├── 22b3f6efd868fa2a97e283fe689863d7
+│   ├── 245c513c928feac65d65393dd33dbf24
+│   ├── 289aa3fe9d2cc2ea7ff3a65aee7afb6a
+│   ├── 28b9349e72707d6634b5bd5ac9952ee9
+│   ├── 28e82b210842761827ceb74f1a9e2fb1
+│   ├── 2b1f2fea29ab5edaadf5dbcc39efe953
+│   ├── 2c18776b6851345752df1ea2806d3a03
+│   ├── 2d53405b532bc8a2d7d022b0270dc911
+│   ├── 2ddf65ecd63e6c67fd89bcbad71ca822
+│   ├── 2e3a8f163db6dd93e2b8f0fa13a29c4d
+│   ├── 2eb1971bc741274df0ee9b6ca63393a3
+│   ├── 2fd74e9c81349c557ef1c689451b23bd
+│   ├── 2ffd93120ad9189bb1e37ea30d356661
+│   ├── 30ccad3ddcdabad1f61000d8662204c9
+│   ├── 32b6012bb294551651edd8e04070d01c
+│   ├── 3780118aee2e35acac4d48d669467a5b
+│   ├── 386b9afa144d644b36920caf418d8851
+│   ├── 397eb7fa09f2583df073d2d2b5c63200
+│   ├── 39f752010435a92f17f3a2825c0dd19a
+│   ├── 3c1f113f58ff891ade9d0a21b8ce986d
+│   ├── 3d928a0d16211c627586ba72ebb4dd4d
+│   ├── 3dc1175a2cccbcf69fc2187228b974d4
+│   ├── 42f6dc5f7806c56e028a514c65915c5e
+│   ├── 481b2780384cc1e646561bf9f48ff019
+│   ├── 48d32b55cc8f224ffbf797034320748c
+│   ├── 4d543efc1d5157a8b52cab3ee5d4aef1
+│   ├── 4d78e0014b1c236edca72bb2a6f2f60e
+│   ├── 4e0cb53f412c563d1e1a32337068db30
+│   ├── 4ede26d8ab7a1408248ac5fc5a3375f6
+│   ├── 4f55c59ca426547f38fbda3d76533559
+│   ├── 501b9043703cd453f8d748e911b2772f
+│   ├── 50b57da57317db9650c6401a66e84b52
+│   ├── 510fd896b5d87b99b5673873877227fd
+│   ├── 511e6dd2b8bf4c9a2541b8d921741852
+│   ├── 515db0aa3e5dcf528be6a71b87e9d0a9
+│   ├── 516799026fc9d096162a9f83ffb7428e
+│   ├── 5279812cf9f30c0a07180d441b89a6dd
+│   ├── 541d8615f052d02a1959d41799458930
+│   ├── 592bc3f8c1d387f20f729411a5a5126c
+│   ├── 5b7e9365d18a43a40d1860943ebfc305
+│   ├── 5d429441b80cc918f411e8f335a07eb2
+│   ├── 5ee69c7b38834b7f19aa1286ea76b96a
+│   ├── 60cdb899a9e6859b87c1753ea904576c
+│   ├── 6204785de67a4c8c7c81e559acf5b3a8
+│   ├── 62a371d04cac6601cab9e7c1718969b5
+│   ├── 63628ef45fccd51f399bc0824af3d2be
+│   ├── 66462424f42954eb437ab5cd11114775
+│   ├── 676ebeb25166654238522a7b63885e39
+│   ├── 67810a85b31a84c64a0028052c6c9ae2
+│   ├── 6af31b7b324243705eac9fb1bb08eeb5
+│   ├── 6c1f78e823650639d6f6583b206f46fa
+│   ├── 6e81e2fe97cd8eda0210a5489b9d9ee8
+│   ├── 7074574d87b85205e0161d87c5b7b4fc
+│   ├── 70a4f5332efa3cfa6f9aec557e7f35ff
+│   ├── 71083a57cab6e928c8e99af135a307a2
+│   ├── 7149dd9f4c3f834cab9874ff289c3a48
+│   ├── 71d14c75ecb930536a84dbc74651ceac
+│   ├── 72e0813a075a35939830451dcd41efda
+│   ├── 7310206212560b3ccb04c87e4a192df1
+│   ├── 74a61209b030e2d13d821c4c167e2328
+│   ├── 74ecf0bde36714b6a6a2ed93ca06eac7
+│   ├── 7535619a7986cd0988578d1dc99a8b22
+│   ├── 75b091861e2d6cab9a35f356dcf14743
+│   ├── 762be957adcaf17fcc425626046601df
+│   ├── 76e7ca18ffeef4c6cf008f54017ad744
+│   ├── 777ca691e83e78d5772f8d639b7e72fc
+│   ├── 78ad438d87b38f663e2e90896ddfe5cb
+│   ├── 796efa09b7c998149eeccaa7301ac9e0
+│   ├── 79c0c647fbbe4385f226e5594219f8b2
+│   ├── 7c5bb73b02036cce726042711e7c4342
+│   ├── 7e196a6cb960bbfe02bdc9a0a1d414db
+│   ├── 807f984d2d7b1f29076e321fe8d8f7e2
+│   ├── 8137376afd232e4b760545f5198e336e
+│   ├── 832aa921fff5f1a7d44987f9e7b7b936
+│   ├── 88db2e7b9f9bc53ac37da0a65f211a32
+│   ├── 899c53344ab504eb0fbba9e6b56538bc
+│   ├── 89d4024aae812c7c4395a56b7f283055
+│   ├── 8c93a23e2728fa015d5997a5a9db4295
+│   ├── 8d6351b3e2b91d2178c7f05f2db8b5d7
+│   ├── 8fd78055ca5783cdf164abcaaec309ce
+│   ├── 9184f829cae86ed3dda9f914043ad058
+│   ├── 9205f91fc81c5958b105814449a5b6cd
+│   ├── 923af00e3d36a82f53778b9198db95d8
+│   ├── 932c302f4783e966c535b860aeee55da
+│   ├── 947c669d3bfa8c930309957e83b3ed66
+│   ├── 9653e8f348f5ec9384f3f27810da9c25
+│   ├── 975248adf21e382749bd26b98a267d41
+│   ├── 99ffcc0f0ab55c2eb543b1305912530e
+│   ├── 9fe6f1699e3928dd57d7e5b6eb07a650
+│   ├── a00b8a888371777eaad3f784f7678fa0
+│   ├── a1b545abee4705b932564577a9950b6a
+│   ├── a4515d724b88a3e53267c0023b390109
+│   ├── a49e11a05a0653aebd55dcda9d035ac5
+│   ├── a84d47bc5399aefcb676ad622a4fbbad
+│   ├── a8801a4f1877fc6e664448a668feb62b
+│   ├── b05c19858c4aefc21811b0137230162a
+│   ├── b072b1f98dcdf39dbe981b0c8df234f4
+│   ├── b0c6b27a8d192ade149c40f510b4a7bd
+│   ├── b1dd611998efe1b0e484cde0f7988e2a
+│   ├── b35612dd5b8c931f6cdf4a029170c4f0
+│   ├── b6c34a923eee00cf329917456cb5f9f6
+│   ├── b6f06b0de022d5ce10386e39d9e8b4f3
+│   ├── b9c4536bbf9346418a7d9b1f797a18e9
+│   ├── bac7b83f3a9170143bc727a8830b2d04
+│   ├── bb16356c56a6cdf4d17c829ab50616e0
+│   ├── bd53bc491469bf452fccc9230e28564f
+│   ├── bd5b1afd44754694bbcfae40fa3062fd
+│   ├── be7ca637fa07d3a36eef35c97c771bd6
+│   ├── becb934f3e7020961ee7a16bb7767d5f
+│   ├── c0b3cc4b725bf06c5c296afe19de9ab6
+│   ├── c1dbcbec8d73cc6011adb191d2b40aff
+│   ├── c2c5c50f61ffbfafa13a2fd2e65c11d2
+│   ├── c3ce3e5b7de1df47c8360c9e9db6caeb
+│   ├── c89aba76546fb855efeb6cea1a929b72
+│   ├── cb9b5287c43d5a17e48a782ebffb62ec
+│   ├── cc747754597c72816eae66a137cab93b
+│   ├── ccdeda076c156bb9a7de9471d6defc44
+│   ├── ccf93891d01262bc674866be30f4b397
+│   ├── cf28c5c6dd9c05840bfb55405eabdb03
+│   ├── cf2f4f88dc88676812f86eb00a70ffc5
+│   ├── cfd8998c45c2eae3710a7ae30ef99eac
+│   ├── d4e925c300c191c02da73e2c593d5ffa
+│   ├── d6c1d680cb3da2e54982d9281e6c4b0b
+│   ├── da5040fabaf3f775642846d3716a6bc9
+│   ├── da6117dced07515f37d1defa1552c056
+│   ├── db8c7f90045d191f0ccf7f113c26f3d4
+│   ├── dbd640a4a030c8fceecc13c854b09907
+│   ├── dc42fdabbc5d7f6773fec5d3123c5a26
+│   ├── dd045b7cb25ffbd38567a6fb3edb92ee
+│   ├── de22c14fb9a40e684ec6a240f0c557c1
+│   ├── dee78193b2ef4c0504d15770278bc58c
+│   ├── df85ba54e59401e8b63c9d9c08e74b8c
+│   ├── e0311cbc2074519dbcbc8b2e8520a2ed
+│   ├── e3dce4bffd9e01d3d6a80915ac6ce585
+│   ├── e40968fa0bc70d433c47983df57196ec
+│   ├── e4b45efa419127b13b47eb91c4851b3d
+│   ├── e52f960c5a8f22570600b23616add02a
+│   ├── e6c7a77e21541af0b55e8296449f3113
+│   ├── e7f823899cb9ab81174c5d047fa9b1bb
+│   ├── e9f8550a6513624bd806c585ad427195
+│   ├── eba842b8c4a239d175b23df9ff72ea9f
+│   ├── ec07f4c63f9d127b12a006993aa9a8cb
+│   ├── ec2cf07876bb22f1c49c8f55f2e8b9a4
+│   ├── ecc76c342007d2db6cbcc20664d71cae
+│   ├── ed65d2d000801fe783c5fedd8408571f
+│   ├── ed67192fcae3622df7c08d7ada7a3d86
+│   ├── f03fecf213aebc486c32df7640c1d37a
+│   ├── f0430ff479bcb52d96f801e6523789ae
+│   ├── f32c200bb84dc24c7a01dd22869e6b21
+│   ├── f476959f4d0639b087f3e15e250c00b4
+│   ├── f538db2d9a4381ad04baa95566e0504c
+│   ├── f64f5ee9638dd0d97dc06b607399905e
+│   ├── f883cd44d95e635a222346960b45e608
+│   ├── f8f19272706d9960f550d8ae6536f1ad
+│   ├── fad4a5b0b2ff8f2eac0a498e9e372fa8
+│   ├── fba0a87c8290f94732092e88d3fd936f
+│   ├── fd0fb0c8b9ccb74da6438dbc872c5875
+│   ├── fea6ce3a9f595673549644b3d85c066b
+│   ├── tmp82u6azkz.__wz_cache
+│   ├── tmp98ggyeql.__wz_cache
+│   └── tmpot0_en9g.__wz_cache
+├── helpers.py
+├── instance
+│   └── shop.db
+├── journal.txt
+├── node_modules
+│   ├── @jridgewell
+│   │   ├── gen-mapping
+│   │   ├── remapping
+│   │   ├── resolve-uri
+│   │   ├── sourcemap-codec
+│   │   └── trace-mapping
+│   ├── @parcel
+│   │   ├── watcher
+│   │   ├── watcher-linux-x64-glibc
+│   │   └── watcher-linux-x64-musl
+│   ├── @tailwindcss
+│   │   ├── cli
+│   │   ├── node
+│   │   ├── oxide
+│   │   ├── oxide-linux-x64-gnu
+│   │   └── oxide-linux-x64-musl
+│   ├── ansi-regex
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   ├── license
+│   │   ├── package.json
+│   │   └── readme.md
+│   ├── ansi-styles
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   ├── license
+│   │   ├── package.json
+│   │   └── readme.md
+│   ├── chalk
+│   │   ├── index.d.ts
+│   │   ├── license
+│   │   ├── node_modules
+│   │   ├── package.json
+│   │   ├── readme.md
+│   │   └── source
+│   ├── cliui
+│   │   ├── CHANGELOG.md
+│   │   ├── LICENSE.txt
+│   │   ├── README.md
+│   │   ├── build
+│   │   ├── index.mjs
+│   │   └── package.json
+│   ├── color-convert
+│   │   ├── CHANGELOG.md
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── conversions.js
+│   │   ├── index.js
+│   │   ├── package.json
+│   │   └── route.js
+│   ├── color-name
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── index.js
+│   │   └── package.json
+│   ├── concurrently
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── dist
+│   │   ├── docs
+│   │   ├── index.d.mts
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   ├── index.mjs
+│   │   └── package.json
+│   ├── detect-libc
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── index.d.ts
+│   │   ├── lib
+│   │   └── package.json
+│   ├── emoji-regex
+│   │   ├── LICENSE-MIT.txt
+│   │   ├── README.md
+│   │   ├── es2015
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   ├── package.json
+│   │   └── text.js
+│   ├── enhanced-resolve
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── lib
+│   │   ├── package.json
+│   │   └── types.d.ts
+│   ├── escalade
+│   │   ├── dist
+│   │   ├── index.d.mts
+│   │   ├── index.d.ts
+│   │   ├── license
+│   │   ├── package.json
+│   │   ├── readme.md
+│   │   └── sync
+│   ├── get-caller-file
+│   │   ├── LICENSE.md
+│   │   ├── README.md
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   ├── index.js.map
+│   │   └── package.json
+│   ├── graceful-fs
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── clone.js
+│   │   ├── graceful-fs.js
+│   │   ├── legacy-streams.js
+│   │   ├── package.json
+│   │   └── polyfills.js
+│   ├── has-flag
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   ├── license
+│   │   ├── package.json
+│   │   └── readme.md
+│   ├── is-extglob
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── index.js
+│   │   └── package.json
+│   ├── is-fullwidth-code-point
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   ├── license
+│   │   ├── package.json
+│   │   └── readme.md
+│   ├── is-glob
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── index.js
+│   │   └── package.json
+│   ├── jiti
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── dist
+│   │   ├── lib
+│   │   └── package.json
+│   ├── lightningcss
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── node
+│   │   └── package.json
+│   ├── lightningcss-linux-x64-gnu
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── lightningcss.linux-x64-gnu.node
+│   │   └── package.json
+│   ├── lightningcss-linux-x64-musl
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── lightningcss.linux-x64-musl.node
+│   │   └── package.json
+│   ├── magic-string
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── dist
+│   │   └── package.json
+│   ├── mri
+│   │   ├── index.d.ts
+│   │   ├── lib
+│   │   ├── license.md
+│   │   ├── package.json
+│   │   └── readme.md
+│   ├── node-addon-api
+│   │   ├── LICENSE.md
+│   │   ├── README.md
+│   │   ├── common.gypi
+│   │   ├── except.gypi
+│   │   ├── index.js
+│   │   ├── napi-inl.deprecated.h
+│   │   ├── napi-inl.h
+│   │   ├── napi.h
+│   │   ├── node_addon_api.gyp
+│   │   ├── node_api.gyp
+│   │   ├── noexcept.gypi
+│   │   ├── nothing.c
+│   │   ├── package-support.json
+│   │   ├── package.json
+│   │   └── tools
+│   ├── picocolors
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── package.json
+│   │   ├── picocolors.browser.js
+│   │   ├── picocolors.d.ts
+│   │   ├── picocolors.js
+│   │   └── types.d.ts
+│   ├── picomatch
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── index.js
+│   │   ├── lib
+│   │   ├── package.json
+│   │   └── posix.js
+│   ├── prettier
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── THIRD-PARTY-NOTICES.md
+│   │   ├── bin
+│   │   ├── doc.d.ts
+│   │   ├── doc.js
+│   │   ├── doc.mjs
+│   │   ├── index.cjs
+│   │   ├── index.d.ts
+│   │   ├── index.mjs
+│   │   ├── internal
+│   │   ├── package.json
+│   │   ├── plugins
+│   │   ├── standalone.d.ts
+│   │   ├── standalone.js
+│   │   └── standalone.mjs
+│   ├── prettier-plugin-tailwindcss
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── dist
+│   │   └── package.json
+│   ├── require-directory
+│   │   ├── LICENSE
+│   │   ├── README.markdown
+│   │   ├── index.js
+│   │   └── package.json
+│   ├── rxjs
+│   │   ├── CHANGELOG.md
+│   │   ├── CODE_OF_CONDUCT.md
+│   │   ├── LICENSE.txt
+│   │   ├── README.md
+│   │   ├── ajax
+│   │   ├── dist
+│   │   ├── fetch
+│   │   ├── operators
+│   │   ├── package.json
+│   │   ├── src
+│   │   ├── testing
+│   │   ├── tsconfig.json
+│   │   └── webSocket
+│   ├── shell-quote
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── index.js
+│   │   ├── package.json
+│   │   ├── parse.js
+│   │   ├── print.py
+│   │   ├── quote.js
+│   │   ├── security.md
+│   │   └── test
+│   ├── source-map-js
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── lib
+│   │   ├── package.json
+│   │   ├── source-map.d.ts
+│   │   └── source-map.js
+│   ├── string-width
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   ├── license
+│   │   ├── package.json
+│   │   └── readme.md
+│   ├── strip-ansi
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   ├── license
+│   │   ├── package.json
+│   │   └── readme.md
+│   ├── supports-color
+│   │   ├── browser.js
+│   │   ├── index.js
+│   │   ├── license
+│   │   ├── package.json
+│   │   └── readme.md
+│   ├── tailwindcss
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── dist
+│   │   ├── index.css
+│   │   ├── package.json
+│   │   ├── preflight.css
+│   │   ├── theme.css
+│   │   └── utilities.css
+│   ├── tapable
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── lib
+│   │   ├── package.json
+│   │   └── tapable.d.ts
+│   ├── tree-kill
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── cli.js
+│   │   ├── index.d.ts
+│   │   ├── index.js
+│   │   └── package.json
+│   ├── tslib
+│   │   ├── CopyrightNotice.txt
+│   │   ├── LICENSE.txt
+│   │   ├── README.md
+│   │   ├── SECURITY.md
+│   │   ├── modules
+│   │   ├── package.json
+│   │   ├── tslib.d.ts
+│   │   ├── tslib.es6.html
+│   │   ├── tslib.es6.js
+│   │   ├── tslib.es6.mjs
+│   │   ├── tslib.html
+│   │   └── tslib.js
+│   ├── wrap-ansi
+│   │   ├── index.js
+│   │   ├── license
+│   │   ├── package.json
+│   │   └── readme.md
+│   ├── y18n
+│   │   ├── CHANGELOG.md
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── build
+│   │   ├── index.mjs
+│   │   └── package.json
+│   ├── yargs
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── browser.d.ts
+│   │   ├── browser.mjs
+│   │   ├── build
+│   │   ├── helpers
+│   │   ├── index.cjs
+│   │   ├── index.mjs
+│   │   ├── lib
+│   │   ├── locales
+│   │   ├── package.json
+│   │   ├── yargs
+│   │   └── yargs.mjs
+│   └── yargs-parser
+│       ├── CHANGELOG.md
+│       ├── LICENSE.txt
+│       ├── README.md
+│       ├── browser.js
+│       ├── build
+│       └── package.json
+├── package-lock.json
+├── package.json
+├── requirements.txt
+├── skills-lock.json
+├── static
+│   ├── css
+│   │   ├── input.css
+│   │   └── output.css
+│   ├── js
+│   │   └── script.js
+│   ├── media
+│   │   ├── bag(1).png
+│   │   ├── bracelet(1).png
+│   │   ├── childrens-jacket(1).png
+│   │   ├── childrens-jacket(2).png
+│   │   ├── childrens-top(1).png
+│   │   ├── childrens-top(2).png
+│   │   ├── favicon.ico
+│   │   ├── logo.png
+│   │   ├── men-shirt(1).png
+│   │   ├── men-shirt(2).png
+│   │   ├── mens-pants(1).png
+│   │   ├── mens-pants(2).png
+│   │   ├── mens-shoes(1).png
+│   │   ├── mens-shoes(2).png
+│   │   ├── necklace(1).png
+│   │   ├── storeimage(2).png
+│   │   ├── storeimage(3).png
+│   │   ├── storeimage.png
+│   │   ├── watch(1).png
+│   │   ├── womans-dress(1).png
+│   │   ├── womans-dress(2).png
+│   │   ├── womans-shoes(1).png
+│   │   └── womans-shoes(2).png
+│   └── robots.txt
+├── tailwind.config.js
+├── templates
+│   ├── layout.html
+│   ├── pages
+│   │   ├── about.html
+│   │   ├── admin
+│   │   ├── all_products.html
+│   │   ├── cart.html
+│   │   ├── customer
+│   │   ├── home.html
+│   │   ├── login.html
+│   │   └── product_page.html
+│   └── parts
+│       ├── admin_header.html
+│       ├── footer.html
+│       └── header.html
+├── testing.py
+├── tree.txt
+└── venv
+    ├── bin
+    │   ├── Activate.ps1
+    │   ├── activate
+    │   ├── activate.csh
+    │   ├── activate.fish
+    │   ├── dotenv
+    │   ├── flask
+    │   ├── httpx
+    │   ├── markdown-it
+    │   ├── normalizer
+    │   ├── pip
+    │   ├── pip3
+    │   ├── pip3.12
+    │   ├── pygmentize
+    │   ├── pyiceberg
+    │   ├── python -> python3
+    │   ├── python3 -> /usr/bin/python3
+    │   ├── python3.12 -> python3
+    │   ├── watchmedo
+    │   └── websockets
+    ├── include
+    │   ├── python3.12
+    │   └── site
+    ├── lib
+    │   └── python3.12
+    ├── lib64 -> lib
+    └── pyvenv.cfg
+
+121 directories, 504 files

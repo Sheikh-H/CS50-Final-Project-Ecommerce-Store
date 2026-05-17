@@ -77,10 +77,10 @@
       </div>
     </div>
     <div class="flex gap-5">
-      <button class="pbutton">Place Order</button>
-      <button class="sbutton" href="{{url_for('all_products')}}">
+      <button class="pbutton" type="submit">Place Order</button>
+      <a class="sbutton" href="{{ url_for('all_products') }}">
         Continue Shopping
-      </button>
+      </a>
     </div>
     {% else %}
 

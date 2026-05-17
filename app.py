@@ -11,17 +11,17 @@ import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
 import stripe
-from supabase import create_client, Client
+import shutil
+
+# if not os.path.exists("/data/shop.db"):
+#     shutil.copy("instance/shop.db", "/data/shop.db")
+
 
 load_dotenv()
 
 app = Flask(__name__)
 
 date_now = date_time()
-
-supabase: Client = create_client(
-    os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_KEY")
-)
 
 
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
@@ -219,6 +219,8 @@ def admin():
 def add_admin():
     title = "Add new admin"
     message = ""
+    if session["admin_role"] != "owner":
+        message = "Restricted Access"
     if request.method == "POST":
         role = request.form.get("role").strip().lower()
         name = request.form.get("name").strip()

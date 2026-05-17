@@ -9,6 +9,10 @@ import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
 import os
+import shutil
+
+# if not os.path.exists("/data/shop.db"):
+#     shutil.copy("instance/shop.db", "/data/shop.db")
 
 
 def connect_db():

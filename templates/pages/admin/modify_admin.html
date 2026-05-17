@@ -12,7 +12,7 @@
     <div class="flex gap-10 rounded-2xl border p-1">
       <form action="/modify_admins" method="post">
         <label for="admin_id">Admin ID: {{ admin['admin_id'] }} </label>
-        <input type="hiden" name="admin_id" value="{{ admin['admin_id'] }}" />
+        <input type="hidden" name="admin_id" value="{{ admin['admin_id'] }}" />
 
         <label for="name">Admin Name:</label>
         <input name="name" type="text" value="{{ admin['name'] }}" />
@@ -24,7 +24,6 @@
           </option>
           <option value="owner">Owner</option>
           <option value="admin">Admin</option>
-          <option value="manager">Manager</option>
         </select>
 
         <label for="password">Update Password:</label>
