@@ -72,17 +72,11 @@ def order_details(order_id):
     user_id = session["user_id"]
     connection = connect_db()
     cursor = connection.cursor()
-    cursor.execute(
-        """SELECT * FROM users WHERE user_id = ?;""",
-        (user_id),
-    )
+    cursor.execute("""SELECT * FROM users WHERE user_id = ?;""",(user_id,),)
     user = cursor.fetchone()
-    cursor.execute(
-        """SELECT * FROM order_items JOIN product_images ON product_images.product_id = order_items.product_id AND product_images.is_primary = 1 WHERE order_id = ?;""",
-        (order_id,),
-    )
-    order = cursor.fetchall()
-    return render_template("pages/customer/order_info.html", user=user, order=order)
+    connection.close()    
+    order = order_details_function(order_id)
+    return render_template("pages/customer/order_info.html",title=title, user=user, order=order)
 
 
 @app.route("/order_history", methods=["GET", "POST"])
@@ -100,7 +94,7 @@ def order_history():
 
     connection.close()
     orders = order_history_function(user_id)
-    return render_template("pages/customer/orders.html", orders=orders, user=user)
+    return render_template("pages/customer/orders.html",title=title orders=orders, user=user)
 
 
 @app.route("/success")

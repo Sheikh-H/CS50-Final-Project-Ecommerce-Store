@@ -28,6 +28,23 @@ def date_time():
     now = date.strftime("%d/%m/%Y %H:%M")
     return now
 
+def order_details_function(order_id):
+    cursor.execute(
+        """
+    SELECT *
+    FROM order_items
+    JOIN products
+        ON products.product_id = order_items.product_id
+    LEFT JOIN product_images
+        ON product_images.product_id = products.product_id
+        AND product_images.is_primary = 1
+    WHERE order_items.order_id = ?;
+""",
+        (order_id,),
+    )
+    order = cursor.fetchall()
+    return order
+
 
 def order_history_function(user_id):
     connection = connect_db()
