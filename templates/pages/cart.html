@@ -1,29 +1,72 @@
 {% extends 'layout.html' %} {% block content %}
+<section>
+  <div class="flex flex-col items-center justify-center p-5">
+    <h1>Your Cart</h1>
 
-<h1>Your Cart</h1>
+    {% if cart %}
+    <div class="w-full">
+      {% for product in cart %}
+      <form method="post">
+        <div class="flex flex-col gap-5 p-5">
+          <div class="flex items-center justify-evenly gap-5 border">
+            <div>
+              <input
+                name="product_id"
+                type="hidden"
+                value="{{product['product_id']}}"
+              />
+              <img
+                src="{{product['image_url']}}"
+                alt="{{product['product_name']}}"
+                style="width: 200px; height: 200px"
+              />
+            </div>
+            <div class="text-center font-bold">
+              <p class="text-5xl">{{product['product_name']}}</p>
+            </div>
+            <div class="flex flex-col gap-1 text-center">
+              <p class="text-2xl font-bold">Quantity</p>
+              <input
+                name="quantity"
+                type="number"
+                value="{{product['quantity']}}"
+                min="1"
+              />
+            </div>
+            <div class="text-center">
+              <p class="text-2xl font-bold">
+                £{{product['price'] * product['quantity']}}
+              </p>
+            </div>
+            <div class="flex flex-col gap-5">
+              <button
+                class="pbutton"
+                formmethod="post"
+                type="submit"
+                formaction="{{url_for('delete_cart_item', product_id=product['product_id'])}}"
+              >
+                Delete Item
+              </button>
+              <button
+                class="sbutton"
+                formmethod="post"
+                formaction="{{url_for('update_cart', product_id = product['product_id'])}}"
+                type="submit"
+              >
+                Update Quantity
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+      {% endfor %}
+    </div>
+    {% else %}
 
-{% if products %} {% for item in products %}
+    <p>Your cart is empty.</p>
 
-<div>
-  <img src="{{ item.product['image_url'] }}" width="200" />
-
-  <h3>{{ item.product['product_name'] }}</h3>
-
-  <p>Quantity: {{ item.quantity }}</p>
-
-  <p>Subtotal: £{{ item.subtotal }}</p>
-</div>
-
-{% endfor %}
-
-<h2>Total: £{{ total }}</h2>
-<form action="{{url_for('checkout')}}" method="post">
-  <button class="pbutton p-2">Checkout</button>
-</form>
-{% else %}
-
-<p>Your cart is empty.</p>
-
-{% endif %}
-<!--  -->
+    {% endif %}
+    <!--  -->
+  </div>
+</section>
 {% endblock %}

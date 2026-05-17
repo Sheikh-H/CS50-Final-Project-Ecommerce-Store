@@ -53,12 +53,94 @@ def home():
     return render_template("pages/home.html", title=title)
 
 
-@app.route("/add_to_cart", methods=["GET", "POST"])
+@app.route("/cart", methods=["GET", "POST"])
 @login_required
-def add_to_cart():
-    return render_template(
-        "pages/cart.html",
+def cart():
+    title = "Shopping Cart"
+    cart = session.get("cart", {}).values()
+
+    return render_template("pages/cart.html", title=title, cart=cart)
+
+
+@app.route("/delete_cart_item/<int:product_id>", methods=["POST"])
+@login_required
+def delete_cart_item(product_id):
+    cart = session.get("cart", {})
+    product_id = str(product_id)
+    if product_id in cart:
+        cart.pop(product_id)
+    session["cart"] = cart
+    session.modified = True
+    return redirect(url_for("cart"))
+
+
+@app.route("/update_cart/<int:product_id>", methods=["POST"])
+@login_required
+def update_cart(product_id):
+    cart = session.get("cart", {})
+    
+    quantity = request.form.get("quantity", type=int)
+
+    product_id = str(product_id)
+
+    if product_id in cart:
+        cart[product_id]["quantity"] = quantity
+
+    session["cart"] = cart
+    session.modified = True
+    
+    return redirect(url_for("cart"))
+
+
+@app.route("/add_to_cart/<int:product_id>", methods=["POST"])
+@login_required
+def add_to_cart(product_id):
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """ SELECT * FROM products JOIN product_images ON products.product_id = product_images.product_id AND product_images.is_primary = 1 WHERE products.product_id = ?;""",
+        (product_id,),
     )
+
+    product = cursor.fetchone()
+    connection.close()
+
+    if not product:
+        return "Product Not Found", 404
+
+    if "cart" not in session:
+        session["cart"] = {}
+
+    cart = session["cart"]
+
+    quantity = request.form.get("quantity", type=int, default=1)
+
+    try:
+        quantity = int(quantity)
+    except ValueError:
+        quantity = 1
+
+    if quantity < 1:
+        quantity = 1
+
+    product_id_str = str(product_id)
+
+    if product_id_str in cart:
+        cart[product_id_str]["quantity"] += quantity
+    else:
+        cart[product_id_str] = {
+            "product_id": product["product_id"],
+            "product_name": product["product_name"],
+            "quantity": quantity,
+            "image_url": product["image_url"],
+            "price": product["product_price"],
+        }
+
+    session["cart"] = cart
+    session.modified = True
+
+    return redirect(url_for("cart"))
 
 
 @app.route("/product_info/<int:product_id>", methods=["GET", "POST"])

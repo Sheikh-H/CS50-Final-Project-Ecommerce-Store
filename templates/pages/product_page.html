@@ -24,8 +24,15 @@
             <p>{{ product['product_description'] }}</p>
             <p class="text-4xl font-bold">£{{ product['product_price'] }}</p>
             <div class="flex items-center justify-center gap-5">
-              <label for="qty">Quantity:</label>
-              <input type="number" min="1" max="10" value="1" step="1" />
+              <label for="quantity">Quantity:</label>
+              <input
+                name="quantity"
+                type="number"
+                min="1"
+                max="10"
+                value="1"
+                step="1"
+              />
               <button type="submit" class="pbutton">Add To Cart</button>
             </div>
           </div>
