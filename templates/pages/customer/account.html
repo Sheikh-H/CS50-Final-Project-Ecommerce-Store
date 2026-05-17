@@ -9,7 +9,7 @@ get_flashed_messages() %} {% if messages %} {% for message in messages %}
       <nav>
         <ul>
           <li><a href="#">Update Details</a></li>
-          <li><a href="#">Your Orders</a></li>
+          <li><a href=" {{url_for('order_history')}} ">Your Orders</a></li>
           <li><a href=" {{url_for('logout')}} ">Logout</a></li>
         </ul>
       </nav>

@@ -65,6 +65,44 @@ def home():
     return render_template("pages/home.html", title=title)
 
 
+@app.route("/order_details/<int:order_id>", methods=["GET", "POST"])
+@login_required
+def order_details(order_id):
+    title = "Order History"
+    user_id = session["user_id"]
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute(
+        """SELECT * FROM users WHERE user_id = ?;""",
+        (user_id),
+    )
+    user = cursor.fetchone()
+    cursor.execute(
+        """SELECT * FROM order_items JOIN product_images ON product_images.product_id = order_items.product_id AND product_images.is_primary = 1 WHERE order_id = ?;""",
+        (order_id,),
+    )
+    order = cursor.fetchall()
+    return render_template("pages/customer/order_info.html", user=user, order=order)
+
+
+@app.route("/order_history", methods=["GET", "POST"])
+@login_required
+def order_history():
+    title = "Order History"
+    user_id = session["user_id"]
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute(
+        """SELECT * FROM users WHERE user_id = ?;""",
+        (user_id,),
+    )
+    user = cursor.fetchone()
+
+    connection.close()
+    orders = order_history_function(user_id)
+    return render_template("pages/customer/orders.html", orders=orders, user=user)
+
+
 @app.route("/success")
 @login_required
 def success():
@@ -167,7 +205,7 @@ def create_checkout_session():
         line_items=line_items,
         mode="payment",
         success_url=f"{BASE_URL}/success?session_id={order_id}",
-        cancel_url="{BASE_URL}/cart",
+        cancel_url=f"{BASE_URL}/cart",
     )
 
     # 4. store stripe session id in DB

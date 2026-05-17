@@ -29,6 +29,30 @@ def date_time():
     return now
 
 
+def order_history_function(user_id):
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute(
+        """
+    SELECT *
+    FROM orders
+    JOIN order_items
+        ON orders.order_id = order_items.order_id
+    JOIN products
+        ON order_items.product_id = products.product_id
+    LEFT JOIN product_images
+        ON product_images.product_id = products.product_id
+        AND product_images.is_primary = 1
+    WHERE orders.user_id = ?
+    ORDER BY orders.order_id DESC;
+""",
+        (user_id,),
+    )
+    orders = cursor.fetchall()
+    connection.close()
+    return orders
+
+
 def load_products():
     connection = connect_db()
     cursor = connection.cursor()
