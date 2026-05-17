@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, session, request
+from flask import Flask, render_template, redirect, url_for, session, request, flash
 import os
 from datetime import *
 import argon2
@@ -25,6 +25,8 @@ date_now = date_time()
 
 
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+
+BASE_URL = os.environ.get("BASE_URL", "http://127.0.0.1:5000")
 
 # This is for uploading all images like product images which are then pulled from online source allowing for admin users to create and add new products
 cloudinary.config(
@@ -64,13 +66,38 @@ def home():
 
 
 @app.route("/success")
+@login_required
 def success():
-    return "Payment successful! Order placed."
+    order_id = request.args.get("session_id")
+
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """
+        UPDATE orders
+        SET order_status = 'paid',
+            payment_status = 'paid',
+            paid_at = datetime('now')
+        WHERE order_id = ?
+    """,
+        (order_id,),
+    )
+
+    connection.commit()
+    connection.close()
+
+    session.pop("cart", None)
+
+    flash("Payment successful — order placed.")
+    return redirect(url_for("account"))
 
 
 @app.route("/cancel")
+@login_required
 def cancel():
-    return "Payment cancelled."
+    flash("Payment unsuccessful, order not placed.")
+    return redirect(url_for("account"))
 
 
 @app.route("/create_checkout_session", methods=["POST"])
@@ -78,9 +105,52 @@ def cancel():
 def create_checkout_session():
     cart = session.get("cart", {})
 
-    line_items = []
+    if not cart:
+        flash("Cart is empty.")
+        return redirect(url_for("cart"))
 
-    for item in cart:
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    total = sum(item["price"] * item["quantity"] for item in cart.values())
+
+    # 1. create order FIRST
+    cursor.execute(
+        """
+        INSERT INTO orders (
+            user_id,
+            order_total_price,
+            order_status,
+            order_created_at
+        )
+        VALUES (?, ?, ?, datetime('now'))
+    """,
+        (session["user_id"], total, "pending"),
+    )
+
+    order_id = cursor.lastrowid
+
+    # 2. store order items immediately (optional but recommended)
+    for item in cart.values():
+        cursor.execute(
+            """
+            INSERT INTO order_items (
+                order_id,
+                product_id,
+                order_items_qty,
+                order_items_price
+            )
+            VALUES (?, ?, ?, ?)
+        """,
+            (order_id, item["product_id"], item["quantity"], item["price"]),
+        )
+
+    connection.commit()
+    connection.close()
+
+    # 3. create Stripe session
+    line_items = []
+    for item in cart.values():
         line_items.append(
             {
                 "price_data": {
@@ -91,58 +161,32 @@ def create_checkout_session():
                 "quantity": item["quantity"],
             }
         )
-    session_stripe = stripe.checkout.Session.create(
+
+    stripe_session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         line_items=line_items,
         mode="payment",
-        success_url="http://127.0.0.1:5000/success",
-        cancel_url="http://127.0.0.1:5000/cart",
-    )
-    return redirect(session_stripe.url)
-
-
-@app.route("/cart", methods=["GET", "POST"])
-@login_required
-def cart():
-    title = "Shopping Cart"
-    cart = session.get("cart", {}).values()
-    shipping = 9.99
-    cart_total = 0 + shipping
-    for product in cart:
-        cart_total += product["price"] * product["quantity"]
-    return render_template(
-        "pages/cart.html", title=title, cart=cart, cart_total=cart_total
+        success_url=f"{BASE_URL}/success?session_id={order_id}",
+        cancel_url="{BASE_URL}/cart",
     )
 
+    # 4. store stripe session id in DB
+    connection = connect_db()
+    cursor = connection.cursor()
 
-@app.route("/delete_cart_item/<int:product_id>", methods=["POST"])
-@login_required
-def delete_cart_item(product_id):
-    cart = session.get("cart", {})
-    product_id = str(product_id)
-    if product_id in cart:
-        cart.pop(product_id)
-    session["cart"] = cart
-    session.modified = True
-    return redirect(url_for("cart"))
+    cursor.execute(
+        """
+        UPDATE orders
+        SET stripe_session_id = ?
+        WHERE order_id = ?
+    """,
+        (stripe_session.id, order_id),
+    )
 
+    connection.commit()
+    connection.close()
 
-@app.route("/update_cart/<int:product_id>", methods=["POST"])
-@login_required
-def update_cart(product_id):
-    cart = session.get("cart", {})
-
-    quantity = request.form.get("quantity", type=int)
-
-    product_id = str(product_id)
-
-    if product_id in cart:
-        cart[product_id]["quantity"] = quantity
-
-    session["cart"] = cart
-    session.modified = True
-
-    return redirect(url_for("cart"))
+    return redirect(stripe_session.url)
 
 
 @app.route("/add_to_cart/<int:product_id>", methods=["POST"])
@@ -194,6 +238,19 @@ def add_to_cart(product_id):
     session.modified = True
 
     return redirect(url_for("cart"))
+
+
+@app.route("/cart", methods=["GET", "POST"])
+@login_required
+def cart():
+    title = "Shopping Cart"
+    cart = session.get("cart", {}).values()
+    cart_total = 0
+    for product in cart:
+        cart_total += product["price"] * product["quantity"]
+    return render_template(
+        "pages/cart.html", title=title, cart=cart, cart_total=cart_total
+    )
 
 
 @app.route("/product_info/<int:product_id>", methods=["GET", "POST"])
@@ -540,7 +597,7 @@ def login():
             session.permanent = True
             return redirect(url_for("account"))
         message = error
-    return render_template("/pages/login.html", title=title, message=message)
+    return render_template("pages/login.html", title=title, message=message)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -558,5 +615,6 @@ def register():
 
 
 if __name__ == "__main__":
-    port = os.environ.get("PORT", 5000)
-    app.run(debug=True, host="127.0.0.1", port=port)
+    port = int(os.environ.get("PORT", 5000))
+    # app.run(debug=True, host="127.0.0.1", port=port) - for production
+    app.run(debug=True, host="0.0.0.0", port=port)  # For upload to render

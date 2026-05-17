@@ -39,7 +39,7 @@
             </div>
             <div class="text-center">
               <p class="text-2xl font-bold">
-                £{{product['price'] * product['quantity']}}
+                £{{"{:.2f}".format(product['price'] * product['quantity'])}}
               </p>
             </div>
             <div class="flex flex-col gap-5">
@@ -68,10 +68,11 @@
         <div
           class="flex w-full flex-col items-center justify-center gap-5 p-5 text-4xl"
         >
-          <p class="text-5xl font-bold">Shipping = £9.99 (UK Delivery)</p>
           <div class="flex">
             <p class="text-5xl font-bold">Cart Total:</p>
-            <p class="text-5xl font-bold text-red-700">£{{ cart_total }}</p>
+            <p class="text-5xl font-bold text-red-700">
+              £{{ "{:.2f}".format(cart_total) }}
+            </p>
           </div>
         </div>
       </div>
