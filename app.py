@@ -63,6 +63,44 @@ def home():
     return render_template("pages/home.html", title=title)
 
 
+@app.route("/success")
+def success():
+    return "Payment successful! Order placed."
+
+
+@app.route("/cancel")
+def cancel():
+    return "Payment cancelled."
+
+
+@app.route("/create_checkout_session", methods=["POST"])
+@login_required
+def create_checkout_session():
+    cart = session.get("cart", {})
+
+    line_items = []
+
+    for item in cart:
+        line_items.append(
+            {
+                "price_data": {
+                    "currency": "gbp",
+                    "product_data": {"name": item["product_name"]},
+                    "unit_amount": int(item["price"] * 100),
+                },
+                "quantity": item["quantity"],
+            }
+        )
+    session_stripe = stripe.checkout.Session.create(
+        payment_method_types=["card"],
+        line_items=line_items,
+        mode="payment",
+        success_url="http://127.0.0.1:5000/success",
+        cancel_url="http://127.0.0.1:5000/cart",
+    )
+    return redirect(session_stripe.url)
+
+
 @app.route("/cart", methods=["GET", "POST"])
 @login_required
 def cart():
