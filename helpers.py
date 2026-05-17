@@ -28,7 +28,10 @@ def date_time():
     now = date.strftime("%d/%m/%Y %H:%M")
     return now
 
+
 def order_details_function(order_id):
+    connection = connect_db()
+    cursor = connection.cursor()
     cursor.execute(
         """
     SELECT *
@@ -43,6 +46,7 @@ def order_details_function(order_id):
         (order_id,),
     )
     order = cursor.fetchall()
+    connection.close()
     return order
 
 

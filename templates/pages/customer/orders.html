@@ -26,7 +26,15 @@
         <p>Order Date: {{order.order_created_at}}</p>
         <p>Order Total: £{{"{:.2f}".format(order.order_total_price)}}</p>
         <p>Order Status: {{order.order_status}}</p>
-        <button class="pbutton">View Order</button>
+        <button
+          class="pbutton"
+          formaction="/order_details"
+          formmethod="post"
+          value="{{order.order_id}}"
+          type="submit"
+        >
+          View Order
+        </button>
       </div>
       {% endfor %}
     </div>
