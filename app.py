@@ -10,11 +10,21 @@ import secrets
 import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
+import stripe
+from supabase import create_client, Client
+
+load_dotenv()
 
 app = Flask(__name__)
 
 date_now = date_time()
 
+supabase: Client = create_client(
+    os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_KEY")
+)
+
+
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 
 # This is for uploading all images like product images which are then pulled from online source allowing for admin users to create and add new products
 cloudinary.config(
