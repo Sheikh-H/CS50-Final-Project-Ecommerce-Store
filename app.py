@@ -368,6 +368,18 @@ def modify_customers():
     )
 
 
+@app.route("/delete_cart_item/<int:product_id>", methods=["POST"])
+@login_required
+def delete_cart_item(product_id):
+    cart = session.get("cart", {})
+    product_id = str(product_id)
+    if product_id in cart:
+        cart.pop(product_id)
+    session["cart"] = cart
+    session.modified = True
+    return redirect(url_for("cart"))
+
+
 # This function was built with the help of AI
 @app.route("/delete_a_product/<int:product_id>", methods=["POST"])
 @admin_required
