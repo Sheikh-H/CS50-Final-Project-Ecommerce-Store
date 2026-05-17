@@ -58,8 +58,13 @@ def home():
 def cart():
     title = "Shopping Cart"
     cart = session.get("cart", {}).values()
-
-    return render_template("pages/cart.html", title=title, cart=cart)
+    shipping = 9.99
+    cart_total = 0 + shipping
+    for product in cart:
+        cart_total += product["price"] * product["quantity"]
+    return render_template(
+        "pages/cart.html", title=title, cart=cart, cart_total=cart_total
+    )
 
 
 @app.route("/delete_cart_item/<int:product_id>", methods=["POST"])
@@ -78,7 +83,7 @@ def delete_cart_item(product_id):
 @login_required
 def update_cart(product_id):
     cart = session.get("cart", {})
-    
+
     quantity = request.form.get("quantity", type=int)
 
     product_id = str(product_id)
@@ -88,7 +93,7 @@ def update_cart(product_id):
 
     session["cart"] = cart
     session.modified = True
-    
+
     return redirect(url_for("cart"))
 
 
