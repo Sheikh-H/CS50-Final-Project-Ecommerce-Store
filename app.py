@@ -368,6 +368,19 @@ def modify_customers():
     )
 
 
+@app.route("/update_cart/<int:product_id>", methods=["POST"])
+@login_required
+def update_cart(product_id):
+    cart = session.get("cart", {})
+    quantity = request.form.get("quantity", type=int)
+    product_id = str(product_id)
+    if product_id in cart:
+        cart[product_id]["quantity"] = quantity
+    session["cart"] = cart
+    session.modified = True
+    return redirect(url_for("cart"))
+
+
 @app.route("/delete_cart_item/<int:product_id>", methods=["POST"])
 @login_required
 def delete_cart_item(product_id):
