@@ -11,11 +11,7 @@ import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
 import stripe
-import shutil
-
-# if not os.path.exists("/data/shop.db"):
-#     shutil.copy("instance/shop.db", "/data/shop.db")
-
+from extensions.supabase_client import supabase
 
 load_dotenv()
 
@@ -53,6 +49,7 @@ app.config.update(
     SESSION_COOKIE_SAMESITE="Lax",
     PERMANENT_SESSION_LIFETIME=timedelta(hours=1),
 )
+
 # This is the type of session (i would still wnat to practice using these a little as there are signed and unsigned versions and depending on what sort of application being developed each has its own pros and cons)
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
@@ -62,30 +59,58 @@ app.secret_key = os.environ.get("SECRET_KEY")
 @app.route("/")
 def home():
     title = "Home Page"
-    connection = connect_db()
-    cursor = connection.cursor()
-    cursor.execute(
-        """ SELECT * FROM products JOIN product_images ON products.product_id = product_images.product_id WHERE product_images.is_primary = 1 AND products.product_is_active = 1 ORDER BY products.product_id DESC LIMIT 3;"""
-    )
-    new_products = cursor.fetchall()
-    connection.close()
-    return render_template("pages/home.html", title=title, new_products=new_products)
+
+    try:
+        response = (
+            supabase.table("product_images")
+            .select("""
+                image_url,
+                is_primary,
+                products (
+                    product_id,
+                    product_name,
+                    product_price,
+                    product_is_active
+                )
+            """)
+            .eq("is_primary", 1)
+            .eq("products.product_is_active", 1)
+            .order("product_id", desc=True)
+            .limit(3)
+            .execute()
+        )
+
+        new_products = response.data
+
+        return render_template(
+            "pages/home.html", title=title, new_products=new_products
+        )
+
+    except Exception as e:
+        print(e)
+        return render_template("pages/home.html", title=title, new_products=[])
 
 
 @app.route("/update_details", methods=["GET", "POST"])
 @login_required
 def update_account_details():
+
     user_id = session["user_id"]
     title = "Update Account Details"
-    connection = connect_db()
-    cursor = connection.cursor()
-    cursor.execute(
-        """SELECT * FROM users WHERE user_id = ?;""",
-        (user_id,),
-    )
-    customer = cursor.fetchone()
-    connection.close()
+
+    try:
+        # Fetch user from Supabase
+        response = supabase.table("users").select("*").eq("user_id", user_id).execute()
+
+        customer_data = response.data
+        customer = customer_data[0] if customer_data else None
+
+    except Exception as e:
+        print(e)
+        customer = None
+
     if request.method == "POST":
+
         fname = request.form.get("firstname")
         sname = request.form.get("surname")
         email = request.form.get("email")
@@ -93,6 +118,7 @@ def update_account_details():
         new_password = request.form.get("new_password", "")
         confirm_password = request.form.get("confirm_password", "")
         address = request.form.get("address")
+
         if new_password != confirm_password:
             flash("New Password Mismatch, Confirm new password")
             return redirect(url_for("update_account_details"))
@@ -103,6 +129,8 @@ def update_account_details():
 
         flash(message)
 
+        return redirect(url_for("update_account_details"))
+
     return render_template(
         "pages/customer/update_details.html", customer=customer, title=title
     )
@@ -111,17 +139,24 @@ def update_account_details():
 @app.route("/order_details/<int:order_id>", methods=["GET", "POST"])
 @login_required
 def order_details(order_id):
+
     title = "Order History"
     user_id = session["user_id"]
-    connection = connect_db()
-    cursor = connection.cursor()
-    cursor.execute(
-        """SELECT * FROM users WHERE user_id = ?;""",
-        (user_id,),
-    )
-    user = cursor.fetchone()
-    connection.close()
+
+    try:
+        # Fetch user from Supabase
+        response = supabase.table("users").select("*").eq("user_id", user_id).execute()
+
+        user_data = response.data
+        user = user_data[0] if user_data else None
+
+    except Exception as e:
+        print(e)
+        user = None
+
+    # Fetch order via helper (assumed already migrated or still being migrated)
     order = order_details_function(order_id)
+
     return render_template(
         "pages/customer/order_info.html", title=title, user=user, order=order
     )
@@ -130,18 +165,24 @@ def order_details(order_id):
 @app.route("/order_history", methods=["GET", "POST"])
 @login_required
 def order_history():
+
     title = "Order History"
     user_id = session["user_id"]
-    connection = connect_db()
-    cursor = connection.cursor()
-    cursor.execute(
-        """SELECT * FROM users WHERE user_id = ?;""",
-        (user_id,),
-    )
-    user = cursor.fetchone()
 
-    connection.close()
+    try:
+        # Fetch user from Supabase
+        response = supabase.table("users").select("*").eq("user_id", user_id).execute()
+
+        user_data = response.data
+        user = user_data[0] if user_data else None
+
+    except Exception as e:
+        print(e)
+        user = None
+
+    # Fetch orders via helper (likely still being migrated)
     orders = order_history_function(user_id)
+
     return render_template(
         "pages/customer/orders.html", title=title, orders=orders, user=user
     )
@@ -150,25 +191,24 @@ def order_history():
 @app.route("/success")
 @login_required
 def success():
+
     order_id = request.args.get("session_id")
 
-    connection = connect_db()
-    cursor = connection.cursor()
+    try:
+        # Update order status in Supabase
+        supabase.table("orders").update(
+            {
+                "order_status": "paid",
+                "payment_status": "paid",
+                "paid_at": datetime.utcnow().isoformat(),
+            }
+        ).eq("order_id", order_id).execute()
 
-    cursor.execute(
-        """
-        UPDATE orders
-        SET order_status = 'paid',
-            payment_status = 'paid',
-            paid_at = datetime('now')
-        WHERE order_id = ?
-    """,
-        (order_id,),
-    )
+    except Exception as e:
+        print(e)
+        flash("Payment recorded but order update failed.")
 
-    connection.commit()
-    connection.close()
-
+    # Clear cart session
     session.pop("cart", None)
 
     flash("Payment successful — order placed.")
@@ -185,55 +225,53 @@ def cancel():
 @app.route("/create_checkout_session", methods=["POST"])
 @login_required
 def create_checkout_session():
+
     cart = session.get("cart", {})
 
     if not cart:
         flash("Cart is empty.")
         return redirect(url_for("cart"))
 
-    connection = connect_db()
-    cursor = connection.cursor()
+    try:
+        # 1. Calculate total
+        total = sum(item["price"] * item["quantity"] for item in cart.values())
 
-    total = sum(item["price"] * item["quantity"] for item in cart.values())
-
-    # 1. create order FIRST
-    cursor.execute(
-        """
-        INSERT INTO orders (
-            user_id,
-            order_total_price,
-            order_status,
-            order_created_at
-        )
-        VALUES (?, ?, ?, datetime('now'))
-    """,
-        (session["user_id"], total, "pending"),
-    )
-
-    order_id = cursor.lastrowid
-
-    # 2. store order items immediately (optional but recommended)
-    for item in cart.values():
-        cursor.execute(
-            """
-            INSERT INTO order_items (
-                order_id,
-                product_id,
-                order_items_qty,
-                order_items_price
+        # 2. Create order
+        order_response = (
+            supabase.table("orders")
+            .insert(
+                {
+                    "user_id": session["user_id"],
+                    "order_total_price": total,
+                    "order_status": "pending",
+                    "order_created_at": "now()",
+                }
             )
-            VALUES (?, ?, ?, ?)
-        """,
-            (order_id, item["product_id"], item["quantity"], item["price"]),
+            .select("order_id")
+            .execute()
         )
 
-    connection.commit()
-    connection.close()
+        if not order_response.data:
+            flash("Failed to create order.")
+            return redirect(url_for("cart"))
 
-    # 3. create Stripe session
-    line_items = []
-    for item in cart.values():
-        line_items.append(
+        order_id = order_response.data[0]["order_id"]
+
+        # 3. Insert order items
+        order_items_payload = [
+            {
+                "order_id": order_id,
+                "product_id": item["product_id"],
+                "order_items_qty": item["quantity"],
+                "order_items_price": item["price"],
+            }
+            for item in cart.values()
+        ]
+
+        supabase.table("order_items").insert(order_items_payload).execute()
+
+        # 4. Create Stripe session
+        line_items = [
             {
                 "price_data": {
                     "currency": "gbp",
@@ -242,84 +280,97 @@ def create_checkout_session():
                 },
                 "quantity": item["quantity"],
             }
+            for item in cart.values()
+        ]
+
+        stripe_session = stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=line_items,
+            mode="payment",
+            success_url=f"{BASE_URL}/success?session_id={order_id}",
+            cancel_url=f"{BASE_URL}/cart",
         )
 
-    stripe_session = stripe.checkout.Session.create(
-        payment_method_types=["card"],
-        line_items=line_items,
-        mode="payment",
-        success_url=f"{BASE_URL}/success?session_id={order_id}",
-        cancel_url=f"{BASE_URL}/cart",
-    )
+        # 5. Update order with Stripe session id
+        supabase.table("orders").update({"stripe_session_id": stripe_session.id}).eq(
+            "order_id", order_id
+        ).execute()
 
-    # 4. store stripe session id in DB
-    connection = connect_db()
-    cursor = connection.cursor()
+        return redirect(stripe_session.url)
 
-    cursor.execute(
-        """
-        UPDATE orders
-        SET stripe_session_id = ?
-        WHERE order_id = ?
-    """,
-        (stripe_session.id, order_id),
-    )
-
-    connection.commit()
-    connection.close()
-
-    return redirect(stripe_session.url)
+    except Exception as e:
+        print(e)
+        flash("Checkout failed. Please try again.")
+        return redirect(url_for("cart"))
 
 
 @app.route("/add_to_cart/<int:product_id>", methods=["POST"])
 @login_required
 def add_to_cart(product_id):
-    connection = connect_db()
-    cursor = connection.cursor()
-
-    cursor.execute(
-        """ SELECT * FROM products JOIN product_images ON products.product_id = product_images.product_id AND product_images.is_primary = 1 WHERE products.product_id = ?;""",
-        (product_id,),
-    )
-
-    product = cursor.fetchone()
-    connection.close()
-
-    if not product:
-        return "Product Not Found", 404
-
-    if "cart" not in session:
-        session["cart"] = {}
-
-    cart = session["cart"]
-
-    quantity = request.form.get("quantity", type=int, default=1)
 
     try:
-        quantity = int(quantity)
-    except ValueError:
-        quantity = 1
+        # 1. Fetch product + primary image using Supabase relation
+        response = (
+            supabase.table("products")
+            .select("""
+                product_id,
+                product_name,
+                product_price,
+                product_images (
+                    image_url,
+                    is_primary
+                )
+            """)
+            .eq("product_id", product_id)
+            .eq("product_images.is_primary", 1)
+            .execute()
+        )
 
-    if quantity < 1:
-        quantity = 1
+        data = response.data
 
-    product_id_str = str(product_id)
+        if not data:
+            return "Product Not Found", 404
 
-    if product_id_str in cart:
-        cart[product_id_str]["quantity"] += quantity
-    else:
-        cart[product_id_str] = {
-            "product_id": product["product_id"],
-            "product_name": product["product_name"],
-            "quantity": quantity,
-            "image_url": product["image_url"],
-            "price": product["product_price"],
-        }
+        product = data[0]
 
-    session["cart"] = cart
-    session.modified = True
+        # Extract primary image safely
+        images = product.get("product_images", [])
+        image_url = images[0]["image_url"] if images else None
 
-    return redirect(url_for("cart"))
+        # 2. Initialize cart
+        if "cart" not in session:
+            session["cart"] = {}
+
+        cart = session["cart"]
+
+        # 3. Get quantity safely
+        quantity = request.form.get("quantity", type=int, default=1)
+        if not quantity or quantity < 1:
+            quantity = 1
+
+        product_id_str = str(product_id)
+
+        # 4. Add or update cart item
+        if product_id_str in cart:
+            cart[product_id_str]["quantity"] += quantity
+        else:
+            cart[product_id_str] = {
+                "product_id": product["product_id"],
+                "product_name": product["product_name"],
+                "quantity": quantity,
+                "image_url": image_url,
+                "price": product["product_price"],
+            }
+
+        # 5. Save session
+        session["cart"] = cart
+        session.modified = True
+
+        return redirect(url_for("cart"))
+
+    except Exception as e:
+        print(e)
+        return "Error adding to cart", 500
 
 
 @app.route("/cart", methods=["GET", "POST"])
@@ -337,30 +388,42 @@ def cart():
 
 @app.route("/product_info/<int:product_id>", methods=["GET", "POST"])
 def product_page(product_id):
-    connection = connect_db()
-    cursor = connection.cursor()
 
-    cursor.execute(
-        """SELECT * FROM products WHERE product_id = ?;""",
-        (product_id,),
-    )
+    try:
+        # 1. Fetch product
+        product_response = (
+            supabase.table("products")
+            .select("*")
+            .eq("product_id", product_id)
+            .execute()
+        )
 
-    product = cursor.fetchone()
+        product_data = product_response.data
 
-    cursor.execute(
-        """ SELECT image_url FROM product_images WHERE product_id = ?;""",
-        (product_id,),
-    )
+        if not product_data:
+            return "Product not found", 404
 
-    images = cursor.fetchall()
+        product = product_data[0]
 
-    connection.close()
+        # 2. Fetch images separately (clean + explicit)
+        images_response = (
+            supabase.table("product_images")
+            .select("image_url")
+            .eq("product_id", product_id)
+            .execute()
+        )
 
-    title = product["product_name"]
+        images = images_response.data
 
-    return render_template(
-        "pages/product_page.html", product=product, images=images, title=title
-    )
+        title = product["product_name"]
+
+        return render_template(
+            "pages/product_page.html", product=product, images=images, title=title
+        )
+
+    except Exception as e:
+        print(e)
+        return "Error loading product", 500
 
 
 @app.route("/all_products", methods=["GET", "POST"])
@@ -478,29 +541,31 @@ def delete_cart_item(product_id):
 @app.route("/delete_a_product/<int:product_id>", methods=["POST"])
 @admin_required
 def delete_product(product_id):
-    connection = connect_db()
-    cursor = connection.cursor()
-    cursor.execute(
-        """UPDATE products SET product_is_active = 0 WHERE product_id = ?;""",
-        (product_id,),
-    )
-    connection.commit()
-    connection.close()
-    return redirect(url_for("modify_products"))
+
+    try:
+        supabase.table("products").update({"product_is_active": False}).eq(
+            "product_id", product_id
+        ).execute()
+
+        return redirect(url_for("modify_products"))
+
+    except Exception as e:
+        print(e)
+        return "Error deleting product", 500
 
 
 @app.route("/delete_image/<int:product_id>/<int:image_id>", methods=["POST"])
 @admin_required
 def delete_image(product_id, image_id):
-    connection = connect_db()
-    cursor = connection.cursor()
-    cursor.execute(
-        """DELETE FROM product_images WHERE image_id = ?;""",
-        (image_id,),
-    )
-    connection.commit()
-    connection.close()
-    return redirect(url_for("modify_a_product", product_id=product_id))
+
+    try:
+        supabase.table("product_images").delete().eq("image_id", image_id).execute()
+
+        return redirect(url_for("modify_a_product", product_id=product_id))
+
+    except Exception as e:
+        print(e)
+        return "Error deleting image", 500
 
 
 @app.route("/add_new_products", methods=["GET", "POST"])
@@ -542,115 +607,198 @@ def add_new_products():
 @app.route("/modify_products/<int:product_id>", methods=["GET", "POST"])
 @admin_required
 def modify_a_product(product_id):
+
     message = ""
-    connection = connect_db()
-    cursor = connection.cursor()
-    cursor.execute(""" SELECT * FROM products WHERE product_id = ?;""", (product_id,))
-    product = cursor.fetchone()
-    cursor.execute(
-        """ SELECT * FROM product_images WHERE product_id = ?;""", (product_id,)
-    )
-    images = cursor.fetchall()
-    title = f"Modify {product['product_name']}"
-    if request.method == "POST":
-        name = request.form.get("name")
-        description = request.form.get("description")
-        category = request.form.get("category")
-        gender = request.form.get("gender")
-        price = request.form.get("price")
-        brand = request.form.get("brand")
-        qty = request.form.get("quantity")
-        primary = request.form.get("is_primary")
-        success, message = update_product(
-            name,
-            description,
-            price,
-            category,
-            brand,
-            qty,
-            gender,
-            product_id,
+
+    try:
+        # 1. Fetch product
+        product_response = (
+            supabase.table("products")
+            .select("*")
+            .eq("product_id", product_id)
+            .execute()
         )
 
-        if primary:
-            primary = int(primary)
-            cursor.execute(
-                """UPDATE product_images SET is_primary = 0 WHERE product_id = ?;""",
-                (product_id,),
+        product_data = product_response.data
+        if not product_data:
+            return "Product not found", 404
+
+        product = product_data[0]
+
+        # 2. Fetch images
+        images_response = (
+            supabase.table("product_images")
+            .select("*")
+            .eq("product_id", product_id)
+            .execute()
+        )
+
+        images = images_response.data
+
+        title = f"Modify {product['product_name']}"
+
+        # ----------------------------
+        # POST: update product
+        # ----------------------------
+        if request.method == "POST":
+
+            name = request.form.get("name")
+            description = request.form.get("description")
+            category = request.form.get("category")
+            gender = request.form.get("gender")
+            price = request.form.get("price")
+            brand = request.form.get("brand")
+            qty = request.form.get("quantity")
+            primary = request.form.get("is_primary")
+
+            success, message = update_product(
+                name,
+                description,
+                price,
+                category,
+                brand,
+                qty,
+                gender,
+                product_id,
             )
-            cursor.execute(
-                """UPDATE product_images SET is_primary = 1 WHERE product_id = ? AND image_id = ?;""",
-                (
-                    product_id,
-                    primary,
-                ),
+
+            # ----------------------------
+            # Set primary image
+            # ----------------------------
+            if primary:
+                primary = int(primary)
+
+                # reset all to false
+                supabase.table("product_images").update({"is_primary": False}).eq(
+                    "product_id", product_id
+                ).execute()
+
+                # set selected to true
+                supabase.table("product_images").update({"is_primary": True}).eq(
+                    "image_id", primary
+                ).execute()
+
+            # ----------------------------
+            # Upload new images
+            # ----------------------------
+            new_images = request.files.getlist("images")
+            valid_images = [img for img in new_images if img.filename != ""]
+
+            if valid_images:
+                for image in valid_images:
+                    upload = cloudinary.uploader.upload(image, folder="MONO_Products")
+
+                    image_url = upload["secure_url"]
+
+                    supabase.table("product_images").insert(
+                        {
+                            "product_id": product_id,
+                            "image_url": image_url,
+                            "is_primary": False,
+                        }
+                    ).execute()
+
+            # refresh data after update
+            product = (
+                supabase.table("products")
+                .select("*")
+                .eq("product_id", product_id)
+                .execute()
+                .data[0]
             )
-        new_images = request.files.getlist("images")
-        valid_images = [image for image in new_images if image.filename != ""]
-        if valid_images:
-            for image in valid_images:
-                upload = cloudinary.uploader.upload(image, folder="MONO_Products")
-                image_url = upload["secure_url"]
-                cursor.execute(
-                    """ INSERT INTO product_images (product_id, image_url) VALUES (?, ?);""",
-                    (
-                        product_id,
-                        image_url,
-                    ),
+
+            images = (
+                supabase.table("product_images")
+                .select("*")
+                .eq("product_id", product_id)
+                .execute()
+                .data
+            )
+
+            if not success:
+                return render_template(
+                    "pages/admin/modify_product.html",
+                    title=title,
+                    product=product,
+                    images=images,
+                    message=message,
                 )
-        connection.commit()
-        connection.close()
-        if not success:
-            return render_template(
-                "pages/admin/modify_product.html",
-                title=title,
-                product=product,
-                images=images,
-                message=message,
-            )
-    return render_template(
-        "pages/admin/modify_product.html",
-        title=title,
-        product=product,
-        images=images,
-        message=message,
-    )
+
+        return render_template(
+            "pages/admin/modify_product.html",
+            title=title,
+            product=product,
+            images=images,
+            message=message,
+        )
+
+    except Exception as e:
+        print(e)
+        return "Error loading product", 500
 
 
 @app.route("/modify_products", methods=["GET", "POST"])
 @admin_required
 def modify_products():
+
     title = "Modify products"
     message = ""
-    connection = connect_db()
-    cursor = connection.cursor()
-    cursor.execute(""" SELECT DISTINCT * FROM products;""")
-    products = cursor.fetchall()
-    cursor.execute(""" SELECT * FROM product_images;""")
-    images = cursor.fetchall()
-    connection.close()
-    return render_template(
-        "pages/admin/modify_products.html",
-        title=title,
-        products=products,
-        images=images,
-    )
+
+    try:
+        # 1. Fetch products
+        products_response = supabase.table("products").select("*").execute()
+
+        products = products_response.data
+
+        # 2. Fetch images
+        images_response = supabase.table("product_images").select("*").execute()
+
+        images = images_response.data
+
+        return render_template(
+            "pages/admin/modify_products.html",
+            title=title,
+            products=products,
+            images=images,
+        )
+
+    except Exception as e:
+        print(e)
+        return render_template(
+            "pages/admin/modify_products.html",
+            title=title,
+            products=[],
+            images=[],
+        )
 
 
 @app.route("/dashboard", methods=["GET", "POST"])
 @admin_required
 def dashboard():
+
     title = "Admin Dashboard"
-    connection = connect_db()
-    cursor = connection.cursor()
-    cursor.execute(
-        """SELECT * FROM admins WHERE admin_id = ?;""", (session["admin_id"],)
-    )
-    admin = cursor.fetchone()
-    connection.close()
-    return render_template(
-        "pages/admin/dashboard.html", title=title, username=admin["username"]
-    )
+    admin_id = session["admin_id"]
+
+    try:
+        response = (
+            supabase.table("admins")
+            .select("admin_id, username")
+            .eq("admin_id", admin_id)
+            .single()
+            .execute()
+        )
+
+        admin = response.data
+
+        return render_template(
+            "pages/admin/dashboard.html",
+            title=title,
+            username=admin["username"] if admin else None,
+        )
+
+    except Exception as e:
+        print(e)
+        return render_template("pages/admin/dashboard.html", title=title, username=None)
 
 
 @app.route("/about")
@@ -662,13 +810,25 @@ def about():
 @app.route("/account")
 @login_required
 def account():
+
     title = "My Account"
     user_id = session["user_id"]
-    connection = connect_db()
-    cursor = connection.cursor()
-    cursor.execute("""SELECT * FROM users WHERE user_id = ?;""", (user_id,))
-    user = cursor.fetchone()
-    connection.close()
+
+    try:
+        response = (
+            supabase.table("users")
+            .select("*")
+            .eq("user_id", user_id)
+            .single()
+            .execute()
+        )
+
+        user = response.data
+
+    except Exception as e:
+        print(e)
+        user = None
+
     return render_template("pages/customer/account.html", title=title, user=user)
 
 
