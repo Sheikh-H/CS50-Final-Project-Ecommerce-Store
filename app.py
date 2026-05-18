@@ -11,11 +11,6 @@ import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
 import stripe
-import shutil
-
-# if not os.path.exists("/data/shop.db"):
-#     shutil.copy("instance/shop.db", "/data/shop.db")
-
 
 load_dotenv()
 

@@ -8,6 +8,8 @@ import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
 import os
 import stripe
+import argon2
+
 
 def connect_db():
     connection = sqlite3.connect("instance/shop.db", timeout=10)
