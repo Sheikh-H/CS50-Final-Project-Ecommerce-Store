@@ -65,6 +65,43 @@ def home():
     return render_template("pages/home.html", title=title)
 
 
+@app.route("/update_details", methods=["GET", "POST"])
+@login_required
+def update_account_details():
+    user_id = session["user_id"]
+    title = "Update Account Details"
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute(
+        """SELECT * FROM users WHERE user_id = ?;""",
+        (user_id,),
+    )
+    customer = cursor.fetchone()
+    if request.method == "POST":
+        fname = request.form.get("firstname")
+        sname = request.form.get("surname")
+        email = request.form.get("email")
+        old_password = request.form.get("old_password", "")
+        new_password = request.form.get("new_password", "")
+        confirm_password = request.form.get("confirm_password", "")
+        address = request.form.get("address")
+        if new_password != confirm_password:
+            flash("New Password Mismatch, Confirm new password")
+            return redirect(url_for("update_account_details"))
+
+        success, message = update_account_details_function(
+            user_id, fname, sname, email, old_password, new_password, address
+        )
+        
+        flash(message)
+    customer = cursor.fetchone()
+    connection.close()
+
+    return render_template(
+        "pages/customer/update_details.html", customer=customer, title=title
+    )
+
+
 @app.route("/order_details/<int:order_id>", methods=["GET", "POST"])
 @login_required
 def order_details(order_id):

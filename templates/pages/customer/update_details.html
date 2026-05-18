@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+{% block content %}
+{% with messages =
+get_flashed_messages() %} {% if messages %} {% for message in messages %}
+<p>{{message}}</p>
+<section>
+  <div class="flex w-full p-2">
+    <div class="flex h-full w-1/2 flex-col lg:w-1/3">
+      <h4 class="mt-5 text-center font-bold">Navigation</h4>
+      <nav>
+        <ul>
+          <li><a href="{{url_for('update_account_details')}}">Update Details</a></li>
+          <li><a href=" {{url_for('order_history')}} ">Your Orders</a></li>
+          <li><a href=" {{url_for('logout')}} ">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="h-full w-full border-l border-red-900 p-1">
+      <h3 class="text-center">
+        Welcome {{customer['firstname']}} {{customer['surname']}}
+      </h3>
+      <p class="font-bold">Update Account Details:</p>
+    <div class="flex gap-10 rounded-2xl border p-1">
+      <form action="/update_details" method="post">
+        <label>Customer ID: {{ customer['user_id'] }}</label>
+        <input name="user_id" type="hidden" value="{{customer['user_id']}}" />
+
+        <label>First Name:</label>
+        <input name="firstname" type="text" value="{{customer['firstname']}}" />
+
+        <label>Last Name:</label>
+        <input name="surname" type="text" value="{{customer['surname']}}" />
+
+        <label>Email (username):</label>
+        <input name="email" type="email" value="{{customer['email']}}" />
+
+        <label>Current Password:</label>
+        <input name="password" type="password" />
+
+        <label>New Password:</label>
+        <input name="password" type="password" />
+
+        <label>Confirm New Password:</label>
+        <input name="password" type="password" />
+
+        <label>Address:</label>
+        <input name="address" type="text" value="{{customer['address']}}" />
+
+        <button class="pbutton p-1" type="submit">Update Customer</button>
+      </form>    </div>
+  </div>
+</section>
+{% endblock %}

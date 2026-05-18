@@ -29,6 +29,103 @@ def date_time():
     return now
 
 
+def update_account_details_function(
+    user_id,
+    fname,
+    sname,
+    email,
+    old_password,
+    new_password,
+    address,
+):
+
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute(
+        """SELECT * FROM users WHERE user_id = ?;""",
+        (user_id,),
+    )
+
+    user = cursor.fetchone()
+
+    if not user:
+        connection.close()
+        return False, "User not found."
+
+    try:
+
+        # User wants to change password
+        if new_password.strip():
+
+            # Old password required
+            if not old_password.strip():
+                connection.close()
+                return False, "Current password is required."
+
+            try:
+                argon2.PasswordHasher().verify(user["password"], old_password)
+
+            except VerifyMismatchError:
+                connection.close()
+                return False, "Current password is incorrect."
+
+            hashed_password = argon2.PasswordHasher().hash(new_password)
+
+            cursor.execute(
+                """
+                UPDATE users
+                SET firstname = ?,
+                    surname = ?,
+                    email = ?,
+                    password = ?,
+                    address = ?
+                WHERE user_id = ?;
+                """,
+                (
+                    fname,
+                    sname,
+                    email,
+                    hashed_password,
+                    address,
+                    user_id,
+                ),
+            )
+
+        else:
+
+            # No password update
+            cursor.execute(
+                """
+                UPDATE users
+                SET firstname = ?,
+                    surname = ?,
+                    email = ?,
+                    address = ?
+                WHERE user_id = ?;
+                """,
+                (
+                    fname,
+                    sname,
+                    email,
+                    address,
+                    user_id,
+                ),
+            )
+
+        connection.commit()
+        connection.close()
+
+        return True, "Account details updated successfully."
+
+    except Exception as e:
+
+        connection.rollback()
+        connection.close()
+
+        return False, f"Error updating account: {e}"
+
+
 def order_details_function(order_id):
     connection = connect_db()
     cursor = connection.cursor()
