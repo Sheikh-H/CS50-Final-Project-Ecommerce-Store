@@ -1,41 +1,29 @@
 import argon2
-
-# import sqlite3
 from flask import *
 from argon2.exceptions import *
-import secrets  # imported to help create the secret key
+import secrets
 from functools import wraps
 from datetime import datetime
-import cloudinary
 import cloudinary.uploader
-from cloudinary.utils import cloudinary_url
 import os
-
-# import shutil
 import stripe
-
-# from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 
-# from supabase import create_client, Client
 from extensions.supabase_client import supabase
 
 load_dotenv()
 
 
-# def connect_db():
-#     connection = sqlite3.connect("instance/shop.db", timeout=10)
-#     connection.execute("PRAGMA foreign_keys = ON")
-#     connection.row_factory = sqlite3.Row
-#     return connection
-
-
+# -------------------------
+# Helpers
+# -------------------------
 def date_time():
-    date = datetime.now()
-    now = date.strftime("%d/%m/%Y %H:%M")
-    return now
+    return datetime.now().strftime("%d/%m/%Y %H:%M")
 
 
+# -------------------------
+# ACCOUNT DETAILS
+# -------------------------
 def update_account_details_function(
     user_id,
     fname,
@@ -46,42 +34,45 @@ def update_account_details_function(
     address,
 ):
 
+    user_res = supabase.table("users").select("*").eq("user_id", user_id).execute()
+    user = user_res.data[0] if user_res.data else None
+
+    if not user:
+        return False, "User not found."
+
     try:
-        # Fetch user from Supabase
-        response = supabase.table("users").select("*").eq("user_id", user_id).execute()
+        if new_password.strip():
 
-        user_data = response.data
-
-        if not user_data:
-            return False, "User not found."
-
-        user = user_data[0]
-
-        ph = argon2.PasswordHasher()
-
-        update_payload = {
-            "firstname": fname,
-            "surname": sname,
-            "email": email,
-            "address": address,
-        }
-
-        # If password is being changed
-        if new_password and new_password.strip():
-
-            if not old_password or not old_password.strip():
+            if not old_password.strip():
                 return False, "Current password is required."
 
             try:
-                ph.verify(user["password"], old_password)
-
+                argon2.PasswordHasher().verify(user["password"], old_password)
             except VerifyMismatchError:
                 return False, "Current password is incorrect."
 
-            update_payload["password"] = ph.hash(new_password)
+            hashed_password = argon2.PasswordHasher().hash(new_password)
 
-        # Update user in Supabase
-        supabase.table("users").update(update_payload).eq("user_id", user_id).execute()
+            supabase.table("users").update(
+                {
+                    "firstname": fname,
+                    "surname": sname,
+                    "email": email,
+                    "password": hashed_password,
+                    "address": address,
+                }
+            ).eq("user_id", user_id).execute()
+
+        else:
+
+            supabase.table("users").update(
+                {
+                    "firstname": fname,
+                    "surname": sname,
+                    "email": email,
+                    "address": address,
+                }
+            ).eq("user_id", user_id).execute()
 
         return True, "Account details updated successfully."
 
@@ -89,62 +80,120 @@ def update_account_details_function(
         return False, f"Error updating account: {e}"
 
 
-def update_customer(user_id, fname, sname, email, password, address):
+# -------------------------
+# ORDERS
+# -------------------------
+def order_details_function(order_id):
+    res = (
+        supabase.table("order_items")
+        .select("*, products(*, product_images(*))")
+        .eq("order_id", order_id)
+        .execute()
+    )
 
+    return res.data
+
+
+def order_history_function(user_id):
+    res = (
+        supabase.table("orders")
+        .select("*, order_items(*, products(*, product_images(*)))")
+        .eq("user_id", user_id)
+        .order("order_id", desc=True)
+        .execute()
+    )
+
+    return res.data
+
+
+# -------------------------
+# PRODUCTS
+# -------------------------
+def load_products():
     try:
-        update_payload = {
-            "firstname": fname,
-            "surname": sname,
-            "email": email,
-            "address": address,
-        }
+        res = (
+            supabase.table("products")
+            .select("*, product_images(*)")
+            .eq("product_images.is_primary", 1)
+            .execute()
+        )
 
-        # Only update password if provided
-        if password and password.strip():
-            ph = argon2.PasswordHasher()
-            update_payload["password"] = ph.hash(password)
+        return True, res.data
 
-        supabase.table("users").update(update_payload).eq("user_id", user_id).execute()
+    except Exception as e:
+        print(e)
+        return False, None
+
+
+# -------------------------
+# CUSTOMER ADMIN
+# -------------------------
+def update_customer(user_id, fname, sname, email, password, address):
+    try:
+        if password != "":
+            hashed_password = argon2.PasswordHasher().hash(password)
+
+            supabase.table("users").update(
+                {
+                    "firstname": fname,
+                    "surname": sname,
+                    "email": email,
+                    "password": hashed_password,
+                    "address": address,
+                }
+            ).eq("user_id", user_id).execute()
+
+        else:
+            supabase.table("users").update(
+                {
+                    "firstname": fname,
+                    "surname": sname,
+                    "email": email,
+                    "address": address,
+                }
+            ).eq("user_id", user_id).execute()
 
         return True, "Customer Details Updated!"
 
     except Exception as e:
         print(e)
-        return False, "Unable to modify customer details"
+        return False, "Unable to moify customer details"
 
 
 def existing_customers():
-
     try:
-        response = supabase.table("users").select("*").execute()
-
-        return True, response.data
-
+        res = supabase.table("users").select("*").execute()
+        return True, res.data
     except Exception as e:
         print(e)
         return False, "Unable to retrieve data"
 
 
+# -------------------------
+# ADMINS
+# -------------------------
 def update_admin(admin_id, name, role, password):
-
-    # Role validation (keep this BEFORE DB call)
     if role not in ["owner", "admin"]:
         return False, "Please enter correct role"
 
     try:
-        update_payload = {
-            "name": name,
-            "role": role,
-        }
+        if password != "":
+            hashed_password = argon2.PasswordHasher().hash(password)
 
-        # Only update password if provided
-        if password and password.strip():
-            ph = argon2.PasswordHasher()
-            update_payload["password"] = ph.hash(password)
-
-        supabase.table("admins").update(update_payload).eq(
-            "admin_id", admin_id
-        ).execute()
+            supabase.table("admins").update(
+                {
+                    "name": name,
+                    "role": role,
+                    "password": hashed_password,
+                }
+            ).eq("admin_id", admin_id).execute()
+        else:
+            supabase.table("admins").update(
+                {
+                    "name": name,
+                    "role": role,
+                }
+            ).eq("admin_id", admin_id).execute()
 
         return True, "Admin Details Updated!"
 
@@ -154,50 +203,25 @@ def update_admin(admin_id, name, role, password):
 
 
 def existing_admins():
-
     try:
-        response = supabase.table("admins").select("*").execute()
-
-        return response.data
-
+        res = supabase.table("admins").select("*").execute()
+        return res.data
     except Exception as e:
         print(e)
         return False
 
 
-# Same function made for admins to prevent url hacking
-def admin_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not session.get("admin_id"):
-            return redirect(url_for("admin"))
-
-        return f(*args, **kwargs)
-
-    return decorated_function
-
-
 def add_admin_function(role, name, username, password):
+    now = date_time()
+
+    existing = supabase.table("admins").select("*").eq("username", username).execute()
+
+    if existing.data:
+        return False, "Username Already Taken"
 
     try:
-        now = date_time()
+        hashed_password = argon2.PasswordHasher().hash(password)
 
-        # 1. Check if username already exists
-        existing = (
-            supabase.table("admins")
-            .select("admin_id")
-            .eq("username", username)
-            .execute()
-        )
-
-        if existing.data:
-            return False, "Username Already Taken"
-
-        # 2. Hash password
-        ph = argon2.PasswordHasher()
-        hashed_password = ph.hash(password)
-
-        # 3. Insert new admin
         supabase.table("admins").insert(
             {
                 "role": role,
@@ -216,33 +240,32 @@ def add_admin_function(role, name, username, password):
 
 
 def admin_login_function(username, password):
-
     try:
-        # Fetch admin by username
-        response = (
-            supabase.table("admins").select("*").eq("username", username).execute()
-        )
+        res = supabase.table("admins").select("*").eq("username", username).execute()
 
-        admin_data = response.data
+        admin = res.data[0] if res.data else None
 
-        if not admin_data:
+        if not admin:
             return None, "Username incorrect"
 
-        admin = admin_data[0]
+        argon2.PasswordHasher().verify(admin["password"], password)
+        return admin, "Logged in"
 
-        # Verify password
-        ph = argon2.PasswordHasher()
+    except VerifyMismatchError:
+        return None, "Password Incorrect"
 
-        try:
-            ph.verify(admin["password"], password)
-            return admin, "Logged in"
 
-        except VerifyMismatchError:
-            return None, "Password Incorrect"
+# -------------------------
+# AUTH DECORATORS
+# -------------------------
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get("admin_id"):
+            return redirect(url_for("admin"))
+        return f(*args, **kwargs)
 
-    except Exception as e:
-        print(e)
-        return None, "Login error"
+    return decorated_function
 
 
 def login_required(f):
@@ -250,55 +273,34 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
             return redirect(url_for("login"))
-
         return f(*args, **kwargs)
 
     return decorated_function
 
 
+# -------------------------
+# USER AUTH
+# -------------------------
 def user_login(email, password):
-
     try:
-        # Fetch user by email
-        response = supabase.table("users").select("*").eq("email", email).execute()
+        res = supabase.table("users").select("*").eq("email", email).execute()
 
-        user_data = response.data
+        user = res.data[0] if res.data else None
 
-        if not user_data:
+        if not user:
             return None, "Email not found, please sign up or try again"
 
-        user = user_data[0]
+        argon2.PasswordHasher().verify(user["password"], password)
+        return user, "Logged in"
 
-        # Verify password
-        ph = argon2.PasswordHasher()
-
-        try:
-            ph.verify(user["password"], password)
-            return user, "Logged in"
-
-        except VerifyMismatchError:
-            return None, "Password Incorrect"
-
-    except Exception as e:
-        print(e)
-        return None, "Login error"
+    except VerifyMismatchError:
+        return None, "Password Incorrect"
 
 
 def add_new_user(fname, sname, email, password, address):
+    hashed_password = argon2.PasswordHasher().hash(password)
 
     try:
-        ph = argon2.PasswordHasher()
-        hashed_password = ph.hash(password)
-
-        # Optional: check if email already exists
-        existing = (
-            supabase.table("users").select("user_id").eq("email", email).execute()
-        )
-
-        if existing.data:
-            return False, "Existing Account or Invalid Details! Try again or login."
-
-        # Insert new user
         supabase.table("users").insert(
             {
                 "firstname": fname,
@@ -312,19 +314,16 @@ def add_new_user(fname, sname, email, password, address):
 
         return True, "Account Registered, please login!"
 
-    except Exception as e:
-        print(e)
-        return False, "Error registering account"
+    except Exception:
+        return False, "Existing Account or Invalid Details! Try again or login."
 
 
-# print(secrets.token_hex(32)) - this is the function used to generate a random key
-
-
+# -------------------------
+# PRODUCTS
+# -------------------------
 def add_product(name, description, gender, category, price, brand, qty, images):
-
     try:
-        # 1. Insert product first
-        product_response = (
+        product_res = (
             supabase.table("products")
             .insert(
                 {
@@ -338,25 +337,18 @@ def add_product(name, description, gender, category, price, brand, qty, images):
                     "product_created_at": date_time(),
                 }
             )
-            .select("product_id")
             .execute()
         )
 
-        if not product_response.data:
-            return False, "Unable to add product!"
+        product_id = product_res.data[0]["product_id"]
 
-        product_id = product_response.data[0]["product_id"]
-
-        # 2. Upload images + insert into product_images
         for index, image in enumerate(images):
-
-            if not image or image.filename == "":
+            if image.filename == "":
                 continue
 
             is_primary = 1 if index == 0 else 0
 
             upload = cloudinary.uploader.upload(image, folder="MONO_Products")
-
             image_url = upload["secure_url"]
 
             supabase.table("product_images").insert(
@@ -384,7 +376,6 @@ def update_product(
     gender,
     product_id,
 ):
-
     try:
         supabase.table("products").update(
             {
