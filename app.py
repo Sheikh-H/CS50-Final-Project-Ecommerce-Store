@@ -77,6 +77,7 @@ def update_account_details():
         (user_id,),
     )
     customer = cursor.fetchone()
+    connection.close()
     if request.method == "POST":
         fname = request.form.get("firstname")
         sname = request.form.get("surname")
@@ -92,10 +93,8 @@ def update_account_details():
         success, message = update_account_details_function(
             user_id, fname, sname, email, old_password, new_password, address
         )
-        
+
         flash(message)
-    customer = cursor.fetchone()
-    connection.close()
 
     return render_template(
         "pages/customer/update_details.html", customer=customer, title=title

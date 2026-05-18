@@ -3,6 +3,7 @@
 {% with messages =
 get_flashed_messages() %} {% if messages %} {% for message in messages %}
 <p>{{message}}</p>
+{% endfor %} {% endif %} {% endwith %}
 <section>
   <div class="flex w-full p-2">
     <div class="flex h-full w-1/2 flex-col lg:w-1/3">
@@ -35,13 +36,13 @@ get_flashed_messages() %} {% if messages %} {% for message in messages %}
         <input name="email" type="email" value="{{customer['email']}}" />
 
         <label>Current Password:</label>
-        <input name="password" type="password" />
+        <input name="password" type="old_password" />
 
         <label>New Password:</label>
-        <input name="password" type="password" />
+        <input name="password" type="new_password" />
 
         <label>Confirm New Password:</label>
-        <input name="password" type="password" />
+        <input name="password" type="confirm_password" />
 
         <label>Address:</label>
         <input name="address" type="text" value="{{customer['address']}}" />
