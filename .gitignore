@@ -1,40 +1,17 @@
-# Python cache
 __pycache__/
-
 *.pyc
-
-# Virtual environment
 venv/
-
-# Flask session files
 flask_session/
-
 flask_session/*
-
-# Environment variables / secrets
 .env
-
-# Database files
 instance/*.db
-
-# Node modules
 node_modules/
-
 node_modules/*
-
-# VS Code settings
 .vscode/
-
-# OS files
 .DS_Store
-
 Thumbs.db
-
-#Others:
 .pretterrc
-
 journal.txt
 database_notes.txt
-
 .gitignore
 testing.py
