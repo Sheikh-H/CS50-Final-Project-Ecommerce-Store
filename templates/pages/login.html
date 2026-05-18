@@ -7,14 +7,28 @@
     class="fixed top-10 left-0 hidden h-1/2 w-1/2 items-center justify-center bg-white p-5 group-hover:flex group-hover:flex-col"
   >
     <p>
-      This is the customer login page. You can use this account to login:<br /><br />test@test.com<br /><br />Testing123<br /><br />I
-      used argon2 to secure passwords and verify stored passwords against what
-      is entered here to keep data secure. I haven't yet implemented the forgot
-      password feature. It would just be a simple feature that asks the person
-      for their email and maybe some information from their last order which
-      then resets the password to something generic for them to then login and
-      change (not to industry standard I know, but I wanted to see if I could
-      create the function which I know I should be able to )
+      This is the customer login page. You can use the following account details
+      to sign in:
+    </p>
+
+    <p>
+      Email: <code>test@test.com</code><br />
+      Password: <code>Testing123</code>
+    </p>
+
+    <p>
+      Passwords are secured using Argon2 for hashing and verification, ensuring
+      that stored credentials are safely compared against user input without
+      exposing raw data.
+    </p>
+
+    <p>
+      The forgot password feature has not been implemented yet. The intended
+      approach would involve requesting the user’s email and possibly some
+      information from their most recent order, then resetting the password to a
+      temporary value so the user can log in and update it. While this is not
+      fully aligned with industry best practices, it was designed as an exercise
+      to explore and implement the functionality.
     </p>
   </div>
 </div>

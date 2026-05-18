@@ -1,4 +1,38 @@
 {% extends 'layout.html' %} {% block content %}
+<div
+  class="group fixed flex h-15 w-15 items-center justify-center rounded-full border bg-red-800 text-center"
+>
+  <h1>?</h1>
+  <div
+    class="fixed top-10 left-0 hidden h-1/2 w-1/2 items-center justify-center bg-white p-5 group-hover:flex group-hover:flex-col"
+  >
+    <p>
+      This is the Add Products page, where new products can be created and
+      stored in the system.
+    </p>
+
+    <p>
+      When a product is added, the image upload is handled through Cloudinary,
+      which stores the image in the cloud and returns a secure URL. This URL is
+      then saved alongside the product data so it can be displayed throughout
+      the website.
+    </p>
+
+    <p>
+      The application currently uses a local SQLite3 database file to manage and
+      store all product and user data. Flask is used to connect the front-end of
+      the website to the database, allowing data to be inserted, retrieved, and
+      displayed dynamically.
+    </p>
+
+    <p>
+      A planned improvement is to migrate the database to an online solution
+      such as Supabase, and to use SQLAlchemy as the ORM. This would improve
+      scalability, make database management more flexible, and provide better
+      integration for future development.
+    </p>
+  </div>
+</div>
 <section>
   <div>
     {% if message %}
