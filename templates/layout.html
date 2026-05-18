@@ -28,7 +28,14 @@
     />
   </head>
   <body class="overflow-x-hidden">
-    {% if session.get('admin_id') %}
+    {% with messages = get_flashed_messages() %} {% if messages %} {% for
+    message in messages %}
+    <div
+      class="center fixed top-10 left-70 z-10 h-20 w-3/4 items-center justify-center rounded-2xl border border-green-700 bg-green-300/70 text-center font-bold"
+    >
+      <p>{{message}}</p>
+    </div>
+    {% endfor %} {% endif %} {% endwith %} {% if session.get('admin_id') %}
     <header>{% include 'parts/admin_header.html' %}</header>
     {% else %}
     <header>{% include 'parts/header.html' %}</header>

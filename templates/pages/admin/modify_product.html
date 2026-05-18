@@ -1,10 +1,10 @@
 {% extends 'layout.html' %} {% block content %}
 <section>
-  <div>
-    {% if message %}
-      <p>{{message}}</p>
-    {% endif %}
-  </div>
+  <!-- <div> -->
+    <!-- {% if message %} -->
+      <!-- <p>{{message}}</p> -->
+    <!-- {% endif %} -->
+  <!-- </div> -->
   <form
     action="{{ url_for('modify_a_product', product_id=product['product_id']) }}"
     method="post"
