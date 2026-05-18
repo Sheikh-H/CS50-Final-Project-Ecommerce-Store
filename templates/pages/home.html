@@ -1,6 +1,27 @@
 {% extends 'layout.html' %} {% block content %}
 <section>
   <div
+    class="group fixed flex h-15 w-15 items-center justify-center rounded-full border bg-red-800 text-center"
+  >
+    <h1>?</h1>
+    <div
+      class="fixed top-10 left-0 hidden h-1/2 w-1/2 items-center justify-center bg-white p-5 group-hover:flex group-hover:flex-col"
+    >
+      <p>
+        This is the home page, simple layout, I have't included many of the css
+        styles that I would like to to make it more interactive and user
+        friendly as I wanted to focus more on making the functions that work the
+        website as it should while also learning to use tailwind css which
+        improved my ability to code this websites front-end features with much
+        ease! The products section on this page is a query that retrieves the
+        latest 3 products entered into the database.<br /><br />
+        Browse around and hover over this for more information like login
+        information.<br /><br />If you'd like to go over to the admin panel, add
+        '/admin' to the end of the url.
+      </p>
+    </div>
+  </div>
+  <div
     class="flex h-screen w-full items-center justify-center bg-[url(/static/media/storeimage.png)] bg-cover bg-fixed bg-center bg-no-repeat p-1"
   >
     <div
