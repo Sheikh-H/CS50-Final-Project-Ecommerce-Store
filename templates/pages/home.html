@@ -1,17 +1,71 @@
 {% extends 'layout.html' %} {% block content %}
 <section>
   <div
-    class="flex h-screen w-full flex-col bg-cover bg-fixed bg-center p-5"
-    style="background-image: url( '{{ url_for('static', filename='media/storeimage.png') }}' );"
+    class="flex h-screen w-full items-center justify-center bg-[url(/static/media/storeimage.png)] bg-cover bg-fixed bg-center bg-no-repeat p-1"
   >
-    <div class="h-full w-full rounded-xl">
-      <h1>Welcome to MONO</h1>
+    <div
+      class="flex h-1/2 w-1/2 flex-col items-center justify-evenly rounded-4xl bg-white/50 text-center shadow-2xl text-shadow-black"
+    >
+      <h1>MONO Fashion</h1>
+      <p>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione aut
+        illo magnam veritatis iure reprehenderit, ipsum explicabo ex quos, vitae
+        accusantium nemo eligendi labore ipsa deleniti esse, porro corporis
+        odio.
+      </p>
+      <a href="{{url_for('all_products')}}" class="pbutton">SHOP NOW</a>
     </div>
   </div>
 </section>
 <section>
-  <div>
-    <h3>New In!</h3>
+  <div class="h-1/2 w-full items-center justify-center p-5">
+    <div class="flex flex-col items-center">
+      <h1>New In!</h1>
+      <div class="flex h-1/2 w-1/2 flex-row justify-evenly gap-5">
+        {% for product in new_products %}
+        <div
+          class="group card h-80 w-1/2 overflow-hidden bg-cover bg-center bg-no-repeat hover:shadow-xl hover:shadow-black"
+          style="background-image: url('{{product.image_url}}');"
+        >
+          <div
+            class="hidden h-full w-full p-5 group-hover:flex group-hover:flex-col group-hover:items-center group-hover:justify-between"
+          >
+            <div class="text-center">
+              <h3>{{product.product_name}}</h3>
+              <p>£{{"{:.2f}".format(product.product_price)}}</p>
+            </div>
+            <form>
+              <button
+                class="pbutton"
+                formaction="{{ url_for('product_page', product_id = product['product_id'] )}}"
+                formmethod="get"
+                value="{{product['product_id']}}"
+                type="submit"
+              >
+                VIEW
+              </button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+<section>
+  <div
+    class="flex h-3/4 w-full flex-col items-center justify-center bg-amber-500/50 p-5"
+  >
+    <div class="w-1/2">
+      <h1>About Mono</h1>
+      <p>
+        Lorem ipsum dolor sit, amet consectetur adipisicing elit. Molestiae
+        dolorem laboriosam reprehenderit doloribus at odit sint qui sunt
+        quibusdam, consequuntur ea adipisci numquam ab commodi veniam quidem sed
+        error autem.
+      </p>
+      <a class="sbutton" href="{{url_for('about')}}">Learn More</a>
+    </div>
   </div>
 </section>
 {% endblock %}

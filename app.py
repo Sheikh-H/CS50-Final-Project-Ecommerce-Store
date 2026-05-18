@@ -62,7 +62,14 @@ app.secret_key = os.environ.get("SECRET_KEY")
 @app.route("/")
 def home():
     title = "Home Page"
-    return render_template("pages/home.html", title=title)
+    connection = connect_db()
+    cursor = connection.cursor()
+    cursor.execute(
+        """ SELECT * FROM products JOIN product_images ON products.product_id = product_images.product_id WHERE product_images.is_primary = 1 AND products.product_is_active = 1 ORDER BY products.product_id DESC LIMIT 3;"""
+    )
+    new_products = cursor.fetchall()
+    connection.close()
+    return render_template("pages/home.html", title=title, new_products=new_products)
 
 
 @app.route("/update_details", methods=["GET", "POST"])
@@ -468,14 +475,13 @@ def delete_cart_item(product_id):
     return redirect(url_for("cart"))
 
 
-# This function was built with the help of AI
 @app.route("/delete_a_product/<int:product_id>", methods=["POST"])
 @admin_required
 def delete_product(product_id):
     connection = connect_db()
     cursor = connection.cursor()
     cursor.execute(
-        """DELETE FROM products WHERE product_id = ?;""",
+        """UPDATE products SET product_is_active = 0 WHERE product_id = ?;""",
         (product_id,),
     )
     connection.commit()
