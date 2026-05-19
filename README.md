@@ -1,6 +1,6 @@
 # CS50 Final Project - Online Fashion Outlet Store (Ecommerce site)
 
-#### Video Demo: [<URL HERE>](https://drive.google.com/file/d/15-9ly-NG_WVj9YX8d3fNz3g1Trqb2L4F/view?usp=sharing)
+#### Video Demo: [link](https://drive.google.com/file/d/15-9ly-NG_WVj9YX8d3fNz3g1Trqb2L4F/view?usp=sharing)
 
 #### Description:
 
