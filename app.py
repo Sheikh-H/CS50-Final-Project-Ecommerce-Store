@@ -20,7 +20,6 @@ date_now = date_time()
 
 
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
-
 BASE_URL = os.environ.get("BASE_URL", "http://127.0.0.1:5000")
 
 # This is for uploading all images like product images which are then pulled from online source allowing for admin users to create and add new products

@@ -1,10 +1,5 @@
 {% extends 'layout.html' %} {% block content %}
 <section>
-  <!-- <div> -->
-    <!-- {% if message %} -->
-    <!-- <p>{{message}}</p> -->
-    <!-- {% endif %} -->
-  <!-- </div> -->
   {% if session['admin_role'] == 'owner' %}
   <div>
     <h3>Modify Admin:</h3>
