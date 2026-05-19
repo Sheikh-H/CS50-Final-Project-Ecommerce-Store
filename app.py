@@ -20,6 +20,7 @@ date_now = date_time()
 
 
 stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+
 BASE_URL = os.environ.get("BASE_URL", "http://127.0.0.1:5000")
 
 # This is for uploading all images like product images which are then pulled from online source allowing for admin users to create and add new products
@@ -382,6 +383,7 @@ def admin():
             session.permanent = True
             return redirect(url_for("dashboard"))
         message = error
+        flash(message)
     return render_template("pages/admin/admin_login.html", title=title, message=message)
 
 
@@ -398,6 +400,7 @@ def add_admin():
         username = request.form.get("username").strip().lower()
         password = request.form.get("password").strip()
         success, message = add_admin_function(role, name, username, password)
+        flash(message)
     return render_template("pages/admin/add_admin.html", title=title, message=message)
 
 
@@ -415,6 +418,7 @@ def modify_admins():
         role = request.form.get("role").lower()
         password = request.form.get("password", "").strip()
         success, message = update_admin(admin_id, name, role, password)
+    flash(message)
     return render_template(
         "pages/admin/modify_admin.html", title=title, admins=admins, message=message
     )
@@ -436,6 +440,7 @@ def modify_customers():
         success, message = update_customer(
             user_id, fname, sname, email, password, address
         )
+    flash(message)
     return render_template(
         "pages/admin/modify_customers.html",
         title=title,
@@ -515,6 +520,7 @@ def add_new_products():
         if not valid_images:
             message = "Please insert at least one image"
             title = "Add new products"
+            flash(message)
             return render_template(
                 "pages/admin/add_new_products.html", title=title, message=message
             )
@@ -528,6 +534,7 @@ def add_new_products():
             qty,
             images,
         )
+        flash(message)
     return render_template(
         "pages/admin/add_new_products.html", title=title, message=message
     )
@@ -595,6 +602,7 @@ def modify_a_product(product_id):
         connection.commit()
         connection.close()
         if not success:
+            flash(message)
             return render_template(
                 "pages/admin/modify_product.html",
                 title=title,
@@ -602,6 +610,7 @@ def modify_a_product(product_id):
                 images=images,
                 message=message,
             )
+        flash(message)
     return render_template(
         "pages/admin/modify_product.html",
         title=title,
@@ -697,6 +706,7 @@ def login():
             session.permanent = True
             return redirect(url_for("account"))
         message = error
+        flash(message)
     return render_template("pages/login.html", title=title, message=message)
 
 
@@ -711,10 +721,11 @@ def register():
         password = request.form.get("password")
         address = request.form.get("address")
         succes, message = add_new_user(firstname, surname, email, password, address)
+    flash(message)
     return render_template("pages/customer/register.html", title=title, message=message)
 
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    # app.run(debug=True, host="127.0.0.1", port=port) - for production
-    app.run(debug=True, host="0.0.0.0", port=port)  # For upload to render
+    app.run(debug=True, host="127.0.0.1", port=port)  # for product env
+#  app.run(debug=True, host="0.0.0.0", port=port)  # For upload to render
